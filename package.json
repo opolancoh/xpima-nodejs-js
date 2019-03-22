@@ -1,0 +1,38 @@
+{
+  "name": "xpima-nodejs-js",
+  "version": "0.1.0",
+  "description": "Expenses Management REST API powered by NodeJS and Express",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest --watchAll --verbose",
+    "test:unit": "jest tests/unit/.*\\.test.js --verbose",
+    "test:integration:jest": "jest tests/integration/.*\\.jest.test.js --verbose",
+    "test:integration:mocha": "mocha tests/integration/**/*.mocha.test.js",
+    "start": "nodemon ./server.js",
+    "start:seed": "nodemon ./server.js seed"
+  },
+  "keywords": [
+    "node",
+    "javascript",
+    "express",
+    "rest",
+    "api"
+  ],
+  "author": "Oscar Polanco <opolancoh@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "config": "^3.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "joi": "^14.3.1",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.4.10"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "jest": "^24.1.0",
+    "mocha": "^6.0.0",
+    "nodemon": "^1.18.9",
+    "supertest": "^3.4.2"
+  }
+}

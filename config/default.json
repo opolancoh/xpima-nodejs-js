@@ -1,0 +1,12 @@
+{
+    "app": {
+        "items": {
+            "limit": 10,
+            "limitMax": 100,
+            "limitMin": 1
+        }
+    },
+    "db": {
+        "name": "expenses-management-dev"
+    }
+}
