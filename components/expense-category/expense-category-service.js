@@ -30,6 +30,7 @@ const service = {};
 service.find = async params => {
     try {
         // set limit
+        // limit=5
         let limit = config.get('app.items.limit');
         if (
             params.limit &&
@@ -44,6 +45,7 @@ service.find = async params => {
                 limitParsed;
         }
         // set offset
+        // offset=10
         let offset = 0;
         if (
             params.offset &&
@@ -52,6 +54,7 @@ service.find = async params => {
             offset = params.offset * 1;
         }
         // set sort
+        // sort=name,-updatedAt
         let sortAggregation = {};
         if (params.sort) {
             params.sort.split(',').forEach(element => {
@@ -70,6 +73,7 @@ service.find = async params => {
             });
         }
         // set select
+        // select=name,updatedAt
         let selectAggregation = '';
         if (params.select) {
             params.select.split(',').forEach(element => {
@@ -78,17 +82,26 @@ service.find = async params => {
             });
         }
         // set filter
+        // search=name:in|description:desc
         let filterAggregation = {};
-        /*if (params.q) {
-                    params.q.split(',').forEach(element => {
-                        if (model.schema.paths.hasOwnProperty(element))
-                        filterAggregation += ` ${element}`;
-                    });
-                }*/
+        if (params.search) {
+            console.log(params.search)
+            const validProps = ['name', 'description'];
+            params.search.split('|').forEach(element => {
+                const index = element.indexOf(':');
+                if (index !== -1) {
+                    const propName = element.substring(0, index);
+                    const searchText = element.substring(index + 1, element.length);
+                    if (validProps.indexOf(propName) !== -1) {
+                        filterAggregation[propName] = new RegExp(searchText, 'i');
+                    }
+                }
+            });
+        }
 
         const _meta = {
-            offset,
-            limit
+            limit,
+            offset
         };
 
         const query = model
@@ -101,7 +114,7 @@ service.find = async params => {
         const data = await query.exec();
 
         // set totalCount
-        if (params.limit || params.offset) {
+        if (params.limit || params.offset || params.search) {
             if (data.length > 0)
                 _meta.totalCount = await model
                 .find(filterAggregation)
@@ -198,10 +211,9 @@ service.create = async item => {
                 status: 'failure',
                 message: 'Item already exists.',
                 code: 409,
-                errors: [{
-                    field: 'name',
-                    message: `"${item.name}" already exists.`
-                }]
+                errors: {
+                    name: [`"${item.name}" already exists.`]
+                }
             };
 
         // format data structure

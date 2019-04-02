@@ -29,12 +29,11 @@ exports.validateItem = (item, schema) => {
 
         if (result && result.error) {
 
-            let errors = [];
+            let errors = {};
             result.error.details.forEach(element => {
-                errors.push({
-                    field: element.context.key,
-                    message: element.message
-                });
+                if (!errors.hasOwnProperty(element.context.key))
+                    errors[element.context.key] = [];
+                errors[element.context.key].push(element.message);
             });
 
             return {
