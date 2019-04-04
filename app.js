@@ -29,7 +29,7 @@ mongoose
     .catch((err) => {
         console.log(`\nError connecting to ${dbUri}\n`);
         console.error(err);
-        process.exit(1);
+        //process.exit(1);
     });
 
 const app = express();
