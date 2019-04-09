@@ -1,4 +1,4 @@
-const expenseCategoriesService = require('../../components/expense-category/expense-category-service');
+const expenseCategoriesService = require('../../modules/expense-category/expense-category-service');
 const expenseCategoriesData = require('./expense-category-seed-data');
 
 console.log(`\n\nseeding started at ${new Date().toDateString()} ...\n`);

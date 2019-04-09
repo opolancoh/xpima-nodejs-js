@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
     try {
         // try to find items
-        const result = await service.find(req.query);
+        const result = await service.find(req);
         res.status(200).send(result);
     } catch (ex) {
         console.log('An exception has been thrown:', ex);
