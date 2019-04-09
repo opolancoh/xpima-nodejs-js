@@ -1,3 +1,5 @@
+const expect = require('chai').expect;
+
 const validationUtils = require('../../helpers/validation-utils');
 
 describe('isObjectId', () => {
@@ -32,7 +34,7 @@ describe('isObjectId', () => {
     ].forEach(item => {
         it(`should return ${item.result} for value {${item.value}} and type {${typeof item.value}}`, () => {
             const result = validationUtils.isObjectId(item.value);
-            expect(result).toBe(item.result);
+            expect(result).to.equal(item.result);
         });
     });
 });
@@ -69,7 +71,7 @@ describe('isIntegerGreaterThanZero', () => {
     ].forEach(item => {
         it(`should return ${item.result} for value {${item.value}} and type {${typeof item.value}}`, () => {
             const result = validationUtils.isIntegerGreaterThanZero(item.value);
-            expect(result).toBe(item.result);
+            expect(result).to.equal(item.result);
         });
     });
 });
@@ -106,7 +108,7 @@ describe('isIntegerGreaterOrEqualThanZero', () => {
     ].forEach(item => {
         it(`should return ${item.result} for value {${item.value}} and type {${typeof item.value}}`, () => {
             const result = validationUtils.isIntegerGreaterOrEqualThanZero(item.value);
-            expect(result).toBe(item.result);
+            expect(result).to.equal(item.result);
         });
     });
 });
