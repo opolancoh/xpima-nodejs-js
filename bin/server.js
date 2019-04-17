@@ -1,21 +1,16 @@
 'use strict';
-
-var ping = require('ping');
-
-const app = require('./app');
-
-// Home route for testing connection
-app.get('/', function(req, res) {
-  let message = '<h1>XPIMA API</h1>\n';
-  message += '<h2>Request received</h2>\n';
-  message += '<h3>Headers</h3>\n';
-  message += JSON.stringify(req.headers);
-  message += '<h3>Body</h3>\n';
-  message += JSON.stringify(req.body);
-  message += '<h3>Query</h3>\n';
-  message += JSON.stringify(req.query);
-  res.send(message);
+// validate required environment variables
+const envVars = ['XPIMA_DB_URI'];
+envVars.forEach(item => {
+  if (!process.env[item]) {
+    console.error(`Environment variable '${item}' is not defined!`);
+    process.exit(1);
+  }
 });
+
+const ping = require('ping');
+
+const app = require('../app');
 
 //
 const port = process.env.PORT || 5000;
@@ -25,7 +20,7 @@ app.listen(port, () => {
   console.log(`\nNode version: ${process.version}`);
   console.log(`\nEnvironment Variables:`);
   console.log(`  NODE_ENV: ${process.env.NODE_ENV}`);
-  app.envVars.forEach(item => {
+  envVars.forEach(item => {
     console.error(`  ${item}: ${process.env[item]}`);
   });
   console.log(`\nChecking internet connection:`);

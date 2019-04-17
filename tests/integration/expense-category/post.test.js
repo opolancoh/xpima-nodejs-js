@@ -6,59 +6,44 @@ const invalidData = require('./data/post-invalid-data');
 const { apiUrl, resourceSuffix } = require('./_params');
 
 describe(`POST ${apiUrl}${resourceSuffix}`, () => {
-  validData.forEach(element => {
-    it(`Code 201: should CREATE an item when data is valid. name: '${
-      element.name
+  validData.forEach(item => {
+    it(`Status 201: should CREATE an item when data is valid. name: '${
+      item.body.name
     }'`, async () => {
       const res = await request(apiUrl)
         .post(resourceSuffix)
-        .send(element);
+        .send(item.body);
 
       expect(res.status).to.equal(200);
+
       expect(res.body)
         .to.have.a.property('status')
-        .to.be.a('string')
-        .to.equal('success');
-      expect(res.body)
-        .to.have.a.property('code')
         .to.be.a('number')
         .to.equal(201);
+
       expect(res.body)
         .to.have.a.property('d')
         .to.be.an('object');
-      expect(res.body)
-        .to.have.a.property('d')
-        .to.have.a.property('_id')
-        .to.be.a('string');
-      expect(res.body)
-        .to.have.a.property('d')
-        .to.have.a.property('name')
-        .to.be.a('string');
-      expect(res.body)
-        .to.have.a.property('d')
-        .to.have.a.property('createdAt')
-        .to.be.a('string');
-      expect(res.body)
-        .to.have.a.property('d')
-        .to.have.a.property('updatedAt')
-        .to.be.a('string');
+
+      item.shouldHaveFields().forEach(field => {
+        expect(res.body.d)
+          .to.have.a.property(field.name)
+          .to.be.a(field.type);
+      });
     });
   });
-  invalidData.forEach(element => {
-    it(`Code ${element.response.code}: ${element.message}`, async () => {
+  invalidData.forEach(item => {
+    it(`Status ${item.status}: ${item.message}`, async () => {
       const res = await request(apiUrl)
         .post(resourceSuffix)
-        .send(element.body);
+        .send(item.body);
 
       expect(res.status).to.equal(200);
+
       expect(res.body)
         .to.have.a.property('status')
-        .to.be.a('string')
-        .to.equal(element.response.status);
-      expect(res.body)
-        .to.have.a.property('code')
         .to.be.a('number')
-        .to.equal(element.response.code);
+        .to.equal(item.status);
       expect(res.body)
         .to.have.a.property('message')
         .to.be.a('string');
