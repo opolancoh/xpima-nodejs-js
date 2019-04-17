@@ -7,9 +7,9 @@
     "test": "mocha tests/test-all.test.js",
     "test:unit": "mocha tests/unit/unit-all.test.js",
     "test:integration": "mocha tests/integration/integration-all.test.js",
-    "start": "node index.js",
-    "start:nodemon": "nodemon ./index.js",
-    "start:seed": "node index.js seed"
+    "start": "node ./bin/server.js",
+    "start:nodemon": "nodemon ./bin/server.js",
+    "start:seed": "node ./bin/server.js seed"
   },
   "keywords": [
     "node",
@@ -24,14 +24,15 @@
     "config": "^3.0.1",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "express-async-errors": "^3.1.1",
     "joi": "^14.3.1",
     "lodash": "^4.17.11",
     "mongoose": "^5.4.10",
-    "ping": "^0.2.2"
+    "ping": "^0.2.2",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "jest": "^24.1.0",
     "mocha": "^6.0.0",
     "nodemon": "^1.18.9",
     "supertest": "^3.4.2"

@@ -16,24 +16,21 @@ describe(`PUT ${apiUrl}${resourceSuffix}/:id`, () => {
     it(element.message, async () => {
       const item = dataFromDb[0];
       const newItem = element.newItem;
-      //
       const res = await request(apiUrl)
         .put(`${resourceSuffix}/${item._id}`)
         .send(newItem);
-      //
+      
       expect(res.status).to.equal(200);
+
       expect(res.body)
         .to.have.a.property('status')
-        .to.be.a('string')
-        .to.equal('success');
-      expect(res.body)
-        .to.have.a.property('code')
         .to.be.a('number')
         .to.equal(200);
-      //
+      
       expect(res.body)
         .to.have.a.property('d')
         .to.be.an('object');
+
       expect(res.body.d)
         .to.have.a.property('_id')
         .to.be.a('string');
@@ -60,12 +57,8 @@ describe(`PUT ${apiUrl}${resourceSuffix}/:id`, () => {
         expect(res.status).to.equal(200);
         expect(res.body)
           .to.have.a.property('status')
-          .to.be.a('string')
-          .to.equal(element.status);
-        expect(res.body)
-          .to.have.a.property('code')
           .to.be.a('number')
-          .to.equal(element.code);
+          .to.equal(element.status);
         //
         expect(res.body)
           .to.have.a.property('message')
