@@ -29,6 +29,7 @@
     "lodash": "^4.17.11",
     "mongoose": "^5.4.10",
     "ping": "^0.2.2",
+    "swagger-ui-express": "^4.0.2",
     "winston": "^3.2.1"
   },
   "devDependencies": {
