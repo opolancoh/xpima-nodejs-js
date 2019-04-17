@@ -1,16 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 
-var logger = require('./helpers/logger');
-
 // middleware
-const error = require('./middleware/error');
-const notFound = require('./middleware/not-found');
+const { errorHandler, logErrorToDb } = require('./middleware/error-handler');
+const notFoundHandler = require('./middleware/not-found-handler');
 require('express-async-errors');
 
 // routers
 var homeRouter = require('./routes/home');
 var docsRouter = require('./routes/docs');
+var logsRouter = require('./routes/logs');
 var expenseCategoriesRouter = require('./routes/expense-categories');
 
 const app = express();
@@ -25,6 +24,7 @@ app.use(
 // routes
 app.use('/', homeRouter);
 app.use('/docs', docsRouter);
+app.use('/api/logs', logsRouter);
 app.use('/api/expense-categories', expenseCategoriesRouter);
 
 // db
@@ -32,14 +32,20 @@ require('./db/mongo-db');
 
 // uncaught exceptions
 process.on('uncaughtException', ex => {
-  console.log(`#UncaughtException ${ex}`);
-  logger.error(`#UncaughtException #${ex.name} ${ex.message}`);
+  const description = `#UncaughtException ${ex}`;
+  console.log(description);
+  const item = {
+    type: 'error',
+    timestamp: new Date(),
+    description
+  };
+  logErrorToDb(item);
 });
 
 // error handler
-app.use(error);
+app.use(errorHandler);
 
 // catch 404 and forward to error handler
-app.use(notFound);
+app.use(notFoundHandler);
 
 module.exports = app;
