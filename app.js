@@ -8,7 +8,7 @@ require('express-async-errors');
 
 // routers
 var homeRouter = require('./routes/home');
-var docsRouter = require('./routes/docs');
+var testRouter = require('./routes/test');
 var logsRouter = require('./routes/logs');
 var expenseCategoriesRouter = require('./routes/expense-categories');
 
@@ -23,7 +23,7 @@ app.use(
 
 // routes
 app.use('/', homeRouter);
-app.use('/docs', docsRouter);
+app.use('/test', testRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api/expense-categories', expenseCategoriesRouter);
 

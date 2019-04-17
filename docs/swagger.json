@@ -1,0 +1,244 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "0.4.0",
+    "title": "Expenses Management REST API (XPIMA)",
+    "description": "This is the backend for XPIMA APP. You can find out the front-end at [https://xpima-reactjs-dot-xpima-cloud.appspot.com](https://xpima-reactjs-dot-xpima-cloud.appspot.com) and the source code at [https://github.com/opolancoh/xpima-nodejs-js](https://github.com/opolancoh/xpima-nodejs-js).  \n\nXPIMA APP is powered by NodeJS and Express (JS).",
+    "contact": {
+      "email": "opolancoh@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "petstore.swagger.io",
+  "basePath": "/v2",
+  "servers": [
+    {
+      "url": "https://xpima-cloud.appspot.com/api"
+    }
+  ],
+  "paths": {
+    "/expense-categories": {
+      "get": {
+        "tags": ["Expense Categories"],
+        "summary": "List all categories of expenses (under construction)",
+        "operationId": "getExpenseCategories",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "How many items to return at one time (min: 1, max: 100), i.e. ?limit=10",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The number of items to skip before starting to collect the result set (min: 0), i.e. ?offset=5",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Comma separated list that sorts the result set, i.e. ?sort=name,-createdAt",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "select",
+            "in": "query",
+            "description": "Comma separated list that selects only the fields needed in the result set, i.e. ?select=name,description",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Pipe separated list that searchs for information in the database, i.e. ?search=name:dinner|description:today",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Expense Categories"],
+        "summary": "Add a new expense category (under construction)",
+        "description": "",
+        "operationId": "addExpenseCategory",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Expense Category object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ExpenseCategory"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": ["write:pets", "read:pets"]
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Expense Categories"],
+        "summary": "Update an existing expense category (under construction)",
+        "description": "",
+        "operationId": "updatePet",
+        "consumes": ["application/json", "application/xml"],
+        "produces": ["application/xml", "application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Expense Category object that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/ExpenseCategory"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "The requested item was Not Found."
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": ["write:pets", "read:pets"]
+          }
+        ]
+      }
+    },
+    "/expense-categories/{id}": {
+      "get": {
+        "summary": "Info for a specific expense category (under construction)",
+        "operationId": "showPetById",
+        "tags": ["Expense Categories"],
+        "parameters": [
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "description": "The id of the expense category to retrieve",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Expected response to a valid request",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Expense Categories"],
+        "summary": "Deletes a expense category (under construction)",
+        "description": "",
+        "operationId": "deletePet",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "api_key",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "petId",
+            "in": "path",
+            "description": "Expense Category id to delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "The requested item was Not Found."
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": ["write:pets", "read:pets"]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExpenseCategory": {
+        "required": ["_id", "name"],
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
