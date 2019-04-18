@@ -61,7 +61,7 @@ utils.getQueryParams = (query, modelFields, filterableFields) => {
       if (index !== -1) {
         const propName = element.substring(0, index);
         const searchText = element.substring(index + 1, element.length);
-        if (filterableColumns.indexOf(propName) !== -1) {
+        if (filterableFields.indexOf(propName) !== -1) {
           params.filter[propName] = new RegExp(searchText, 'i');
         }
       }
