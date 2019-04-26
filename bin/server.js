@@ -1,9 +1,12 @@
 'use strict';
 // validate required environment variables
-const envVars = ['XPIMA_DB_URI'];
+const envVars = [
+  { key: 'XPIMA_DB_URI', display: true },
+  { key: 'XPIMA_JWTPK', display: false }
+];
 envVars.forEach(item => {
-  if (!process.env[item]) {
-    console.error(`Environment variable '${item}' is not defined!`);
+  if (!process.env[item.key]) {
+    console.error(`Environment variable '${item.key}' is not defined!`);
     process.exit(1);
   }
 });
@@ -21,7 +24,9 @@ app.listen(port, () => {
   console.log(`\nEnvironment Variables:`);
   console.log(`  NODE_ENV: ${process.env.NODE_ENV}`);
   envVars.forEach(item => {
-    console.error(`  ${item}: ${process.env[item]}`);
+    console.error(
+      `  ${item.key}: ${item.display ? process.env[item.key] : 'ok!'}`
+    );
   });
   console.log(`\nChecking internet connection:`);
   const hosts = ['google.com', 'yahoo.com'];

@@ -9,8 +9,8 @@ const expenseCategoriesAdded = 0;
 expenseCategoriesData.forEach(async (item) => {
     try {
         const result = await expenseCategoriesService.create(item);
-        console.log(result.status)
-        if (result.status === 'success')
+        console.log(result.code)
+        if (result.code === 'success')
             expenseCategoriesAdded++;
     } catch (ex) {
         console.log(ex);

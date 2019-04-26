@@ -1,1 +1,1 @@
-require('./validation-utils.test');
+require('./validation-utils/_all.test');

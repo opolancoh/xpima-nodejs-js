@@ -12,7 +12,7 @@ module.exports = function(req, res, next) {
   logger.warn(item.description);
   logErrorToDb(item);
   res.status(200).send({
-    status: 404,
+    code: 404,
     message: item.description
   });
 };

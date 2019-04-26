@@ -1,13 +1,14 @@
-const model = require('./model');
-
-const modelValidator = require('./model-validator');
+const model = require('./expense-category-model');
+const modelValidator = require('./expense-category-validator');
 const baseService = require('../_shared/base-service');
 
 model.validator = modelValidator;
+model.filterableFields = ['name', 'description'];
+
 const service = {};
 
 service.find = async request => {
-  return await baseService.find(request, model, ['name', 'description']);
+  return await baseService.find(request, model);
 };
 
 service.findById = async (id, query) => {

@@ -9,7 +9,7 @@ const { apiUrl, resourceSuffix } = require('./_params');
 describe(`GET ${apiUrl}${resourceSuffix}`, () => {
   // Pagination
   paginationData.forEach(item => {
-    it(`Status 200: [pagination] should GET ${
+    it(`Code 200: [pagination] should GET ${
       item.dataLength
     } items when request is ${resourceSuffix}${item.query}`, async () => {
       const res = await request(apiUrl).get(`${resourceSuffix}${item.query}`);
@@ -17,7 +17,7 @@ describe(`GET ${apiUrl}${resourceSuffix}`, () => {
       expect(res.status).to.equal(200);
 
       expect(res.body)
-        .to.have.a.property('status')
+        .to.have.a.property('code')
         .to.be.a('number')
         .to.equal(200);
 
@@ -43,7 +43,7 @@ describe(`GET ${apiUrl}${resourceSuffix}`, () => {
     });
   });
   // CountTotal
-  it(`Status 200: [pagination] should GET _meta.totalCount property when request adds a 'x-request-count-total' header`, async () => {
+  it(`Code 200: [pagination] should GET _meta.totalCount property when request adds a 'x-request-count-total' header`, async () => {
     const res = await request(apiUrl)
       .get(`${resourceSuffix}`)
       .set('x-request-count-total', 'true');
@@ -59,13 +59,13 @@ describe(`GET ${apiUrl}${resourceSuffix}`, () => {
   // Select
   selectData.forEach(item => {
     const url = `${resourceSuffix}?${item.query}&limit=1`;
-    it(`Status 200: [select] should GET items when request is ${url}`, async () => {
+    it(`Code 200: [select] should GET items when request is ${url}`, async () => {
       const res = await request(apiUrl).get(url);
 
       expect(res.status).to.equal(200);
 
       expect(res.body)
-        .to.have.a.property('status')
+        .to.have.a.property('code')
         .to.be.a('number')
         .to.equal(200);
       expect(res.body)

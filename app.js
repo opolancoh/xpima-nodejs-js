@@ -8,8 +8,9 @@ require('express-async-errors');
 
 // routers
 var homeRouter = require('./routes/home');
-var testRouter = require('./routes/test');
+var authRouter = require('./routes/auth');
 var logsRouter = require('./routes/logs');
+var usersRouter = require('./routes/users');
 var expenseCategoriesRouter = require('./routes/expense-categories');
 
 const app = express();
@@ -23,8 +24,9 @@ app.use(
 
 // routes
 app.use('/', homeRouter);
-app.use('/test', testRouter);
+app.use('/auth', authRouter);
 app.use('/api/logs', logsRouter);
+app.use('/api/users', usersRouter);
 app.use('/api/expense-categories', expenseCategoriesRouter);
 
 // db

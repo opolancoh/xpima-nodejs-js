@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const service = require('../api/modules/expense-category/service');
+const service = require('../api/modules/expense-category/expense-category-service');
 
 // Get all
 router.get('/', async (req, res) => {

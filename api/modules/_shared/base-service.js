@@ -1,8 +1,9 @@
 const transformationUtils = require('../../../helpers/transformation-utils');
+const { c404 } = require('../_shared/base-response');
 
 const baseService = {};
 
-baseService.find = async (request, model, filterableFields) => {
+baseService.find = async (request, model) => {
   const {
     limit,
     offset,
@@ -12,7 +13,7 @@ baseService.find = async (request, model, filterableFields) => {
   } = transformationUtils.getQueryParams(
     request.query,
     model.schema.paths,
-    filterableFields
+    model.filterableFields
   );
 
   const _meta = {
@@ -39,8 +40,12 @@ baseService.find = async (request, model, filterableFields) => {
     } else _meta.totalCount = 0;
   }
 
+  // Delete fields that are not returnable
+  if (model.nonSelectableFields)
+    deleteNonSelectableFieldsFromArray(data, model.nonSelectableFields);
+
   return {
-    status: 200,
+    code: 200,
     _meta,
     d: data
   };
@@ -59,15 +64,17 @@ baseService.findById = async (id, queryString, model) => {
   const query = model.findById(id).select(select);
 
   const itemFound = await query.exec();
-  if (itemFound)
+  if (itemFound) {
+    // Delete fields that are not returnable
+    if (model.nonSelectableFields)
+      deleteNonSelectableFieldsFromObject(itemFound, model.nonSelectableFields);
     return {
-      status: 200,
+      code: 200,
       d: itemFound
     };
-  else
+  } else
     return {
-      status: 404,
-      message: `The requested item was Not Found.`,
+      ...c404,
       errors: {
         id: [
           `The specified item Id '${id}' was not found, or you do not have permission to access it.`
@@ -87,10 +94,14 @@ baseService.create = async (body, model) => {
   const now = new Date();
   item.createdAt = now;
   item.updatedAt = now;
-  const itemCreated = await model.create(item);
+  let itemCreated = await model.create(item);
+
+  // Delete fields that are not returnable
+  if (model.nonSelectableFields)
+    deleteNonSelectableFieldsFromObject(itemCreated, model.nonSelectableFields);
 
   return {
-    status: 201,
+    code: 201,
     d: itemCreated
   };
 };
@@ -114,15 +125,20 @@ baseService.update = async (id, body, model) => {
     }
   );
 
-  if (itemUpdated)
+  if (itemUpdated) {
+    // Delete fields that are not returnable
+    if (model.nonSelectableFields)
+      deleteNonSelectableFieldsFromObject(
+        itemUpdated,
+        model.nonSelectableFields
+      );
     return {
-      status: 200,
+      code: 200,
       d: itemUpdated
     };
-  else
+  } else
     return {
-      status: 404,
-      message: `The requested item was Not Found.`,
+      ...c404,
       errors: {
         id: [
           `The specified item Id '${id}' was not found, or you do not have permission to access it.`
@@ -142,18 +158,43 @@ baseService.delete = async (id, model) => {
   });
   if (itemDeleted)
     return {
-      status: 200
+      code: 200
     };
   else
     return {
-      status: 404,
-      message: `The requested item was Not Found.`,
+      ...c404,
       errors: {
         id: [
           `The specified item Id '${id}' was not found, or you do not have permission to access it.`
         ]
       }
     };
+};
+
+/*const getSelectableFields = (select, nonSelectableFields) => {
+  let selectableFields = select;
+  if (nonSelectableFields) {
+    const selectFiltered = select.filter(function(e) {
+      return this.indexOf(e) < 0;
+    }, nonSelectableFields);
+
+    selectableFields = selectFiltered.concat(
+      nonSelectableFields.map(item => {
+        return '-' + item;
+      })
+    );
+  }
+  return selectableFields;
+};*/
+
+const deleteNonSelectableFieldsFromObject = (obj, nonSelectableFields) => {
+  nonSelectableFields.forEach(element => delete obj._doc[element]);
+};
+
+const deleteNonSelectableFieldsFromArray = (arr, nonSelectableFields) => {
+  arr.forEach(item => {
+    nonSelectableFields.forEach(element => delete item._doc[element]);
+  });
 };
 
 module.exports = baseService;

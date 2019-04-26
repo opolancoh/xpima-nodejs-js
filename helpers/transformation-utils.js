@@ -46,10 +46,10 @@ utils.getQueryParams = (query, modelFields, filterableFields) => {
   }
   // set select
   // select=name,updatedAt
-  params.select = '';
+  params.select = [];
   if (modelFields && query.select) {
     query.select.split(',').forEach(element => {
-      if (modelFields.hasOwnProperty(element)) params.select += ` ${element}`;
+      if (modelFields.hasOwnProperty(element)) params.select.push(element);
     });
   }
   // set filter

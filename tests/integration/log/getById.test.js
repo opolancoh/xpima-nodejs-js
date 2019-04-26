@@ -15,7 +15,7 @@ describe(`GET ${apiUrl}${resourceSuffix}/:id`, () => {
   // Valid data
   validData.forEach(item => {
     const query = item.query;
-    it(`Status 200: should GET an item when query is ?${query}`, async () => {
+    it(`Code 200: should GET an item when query is ?${query}`, async () => {
       const id = dataFromDb[0]._id;
       const url = `${resourceSuffix}/${id}?${query}`;
       const res = await request(apiUrl).get(url);
@@ -23,7 +23,7 @@ describe(`GET ${apiUrl}${resourceSuffix}/:id`, () => {
       expect(res.status).to.equal(200);
 
       expect(res.body)
-        .to.have.a.property('status')
+        .to.have.a.property('code')
         .to.be.a('number')
         .to.equal(200);
 
@@ -55,9 +55,9 @@ describe(`GET ${apiUrl}${resourceSuffix}/:id`, () => {
       expect(res.status).to.equal(200);
 
       expect(res.body)
-        .to.have.a.property('status')
+        .to.have.a.property('code')
         .to.be.a('number')
-        .to.equal(item.status);
+        .to.equal(item.code);
 
       expect(res.body)
         .to.have.a.property('message')
