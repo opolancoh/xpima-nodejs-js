@@ -7,7 +7,7 @@ const { apiUrl, resourceSuffix } = require('./_params');
 
 describe(`POST ${apiUrl}${resourceSuffix}`, () => {
   validData.forEach(item => {
-    it(`Status 201: should CREATE an item when data is valid. level: '${
+    it(`Code 201: should CREATE an item when data is valid. level: '${
       item.body.level
     }'`, async () => {
       const res = await request(apiUrl)
@@ -17,7 +17,7 @@ describe(`POST ${apiUrl}${resourceSuffix}`, () => {
       expect(res.status).to.equal(200);
 
       expect(res.body)
-        .to.have.a.property('status')
+        .to.have.a.property('code')
         .to.be.a('number')
         .to.equal(201);
 
@@ -33,7 +33,7 @@ describe(`POST ${apiUrl}${resourceSuffix}`, () => {
     });
   });
   invalidData.forEach(item => {
-    it(`Status ${item.status}: ${item.message}`, async () => {
+    it(`Code ${item.code}: ${item.message}`, async () => {
       const res = await request(apiUrl)
         .post(resourceSuffix)
         .send(item.body);
@@ -41,9 +41,9 @@ describe(`POST ${apiUrl}${resourceSuffix}`, () => {
       expect(res.status).to.equal(200);
 
       expect(res.body)
-        .to.have.a.property('status')
+        .to.have.a.property('code')
         .to.be.a('number')
-        .to.equal(item.status);
+        .to.equal(item.code);
       expect(res.body)
         .to.have.a.property('message')
         .to.be.a('string');

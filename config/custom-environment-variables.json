@@ -1,0 +1,6 @@
+{
+  "secrets": {
+    "dbUri": "XPIMA_DB_URI",
+    "jwtPrivateKey": "XPIMA_JWTPK"
+  }
+}

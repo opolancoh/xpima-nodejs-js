@@ -20,7 +20,7 @@ const findByIdValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      status: 400,
+      code: 400,
       message: 'Invalid request data.',
       errors: validationIdResult.errors
     };
@@ -29,7 +29,7 @@ const findByIdValidation = id => {
 const createValidation = async item => {
   /** Input Validation **/
   const { validatedItem, errors } = baseValidator.validateSchema(item, schema);
-  if (errors) return { status: 400, message: 'Invalid request data.', errors };
+  if (errors) return { code: 400, message: 'Invalid request data.', errors };
 
   /** Business Logic **/
 
@@ -38,5 +38,6 @@ const createValidation = async item => {
 
 module.exports = {
   findByIdValidation,
-  createValidation
+  createValidation,
+  validateSchema: baseValidator.validateSchema
 };

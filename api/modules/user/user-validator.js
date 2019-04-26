@@ -1,23 +1,40 @@
 const Joi = require('joi');
 const _ = require('lodash');
 
-const model = require('./model');
+const model = require('./user-model');
 const baseValidator = require('../_shared/base-validator');
+const validationUtils = require('../../../helpers/validation-utils');
+const { c400, c409 } = require('../_shared/base-response');
+const { getSalt, getHashed } = require('../../../helpers/security-utils');
 
 const schema = Joi.object().keys({
-  isNew: Joi.boolean().required(),
+  _asRequired: Joi.boolean().required(),
   name: Joi.string()
     .trim()
+    .min(3)
     .max(30)
-    .when('isNew', {
+    .when('_asRequired', {
       is: true,
       then: Joi.required()
     })
     .label('Name'),
-  description: Joi.string()
+  email: Joi.string()
+    .regex(validationUtils.emailRegExp)
+    .max(60)
+    .when('_asRequired', {
+      is: true,
+      then: Joi.required()
+    })
+    .label('Email'),
+  password: Joi.string()
     .trim()
-    .max(255)
-    .label('Description')
+    .min(6)
+    .max(60)
+    .when('_asRequired', {
+      is: true,
+      then: Joi.required()
+    })
+    .label('Password')
 });
 
 const findByIdValidation = id => {
@@ -25,30 +42,34 @@ const findByIdValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      status: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
 };
 
 const createValidation = async item => {
   /** Input Validation **/
-  item.isNew = true;
-  const { validatedItem, errors } = baseValidator.validateSchema(item, schema);
-  delete validatedItem.isNew;
-  if (errors) return { status: 400, message: 'Invalid request data.', errors };
+  const { validatedItem, errors } = baseValidator.validateSchema(
+    item,
+    schema,
+    true
+  );
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
-  // Check if name is duplicated
-  if (await nameAlreadyExists(item.name)) {
+  // Check if item is duplicated
+  if (await itemAlreadyExists(item.email)) {
     return {
-      status: 409,
-      message: 'Item already exists. create',
+      ...c409,
       errors: {
-        name: [`"${item.name}" already exists.`]
+        email: [`"${item.email}" already exists.`]
       }
     };
   }
+  // Hash password
+  const salt = await getSalt();
+  const hashed = await getHashed(validatedItem.password, salt);
+  validatedItem.password = hashed;
 
   return { validatedItem };
 };
@@ -59,38 +80,43 @@ const updateValidation = async (id, item) => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      status: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
   // Validate if item is empty
   const isEmpty = _.isEmpty(item);
   if (isEmpty)
     return {
-      status: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: {
         _: [`You must provide at least one field to be updated.`]
       }
     };
   // Validate item
-  item.isNew = false;
-  const { validatedItem, errors } = baseValidator.validateSchema(item, schema);
-  delete validatedItem.isNew;
-  if (errors) return { status: 400, message: 'Invalid request data.', errors };
+  const { validatedItem, errors } = baseValidator.validateSchema(
+    item,
+    schema,
+    false
+  );
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
-  // Check if name is duplicated
-  if (item.name) {
-    if (await nameAlreadyExists(item.name, id)) {
+  // Check if item is duplicated
+  if (validatedItem.email) {
+    if (await itemAlreadyExists(validatedItem.email, id)) {
       return {
-        status: 409,
-        message: 'Item already exists. uodate',
+        ...c409,
         errors: {
-          name: [`"${item.name}" already exists.`]
+          email: [`"${validatedItem.email}" already exists.`]
         }
       };
     }
+  }
+  // Hash password
+  if (validatedItem.password) {
+    const salt = await getSalt();
+    const hashed = await getHashed(validatedItem.password, salt);
+    validatedItem.password = hashed;
   }
 
   return { validatedItem };
@@ -101,16 +127,15 @@ const deleteValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      status: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
 };
 
-const nameAlreadyExists = async (name, id) => {
+const itemAlreadyExists = async (email, id) => {
   const itemFound = await model.findOne(
     {
-      name: name
+      email: email
     },
     '_id'
   );
@@ -127,5 +152,6 @@ module.exports = {
   findByIdValidation,
   createValidation,
   updateValidation,
-  deleteValidation
+  deleteValidation,
+  validateSchema: baseValidator.validateSchema
 };

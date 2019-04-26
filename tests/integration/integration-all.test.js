@@ -1,3 +1,4 @@
 // Expense Categories
-require('./expense-category/all.test');
-require('./log/all.test');
+require('./expense-category/_all.test');
+require('./log/_all.test');
+require('./user/_all.test');

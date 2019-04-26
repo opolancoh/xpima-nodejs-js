@@ -3,7 +3,19 @@ const validData = [
     newItem: {
       name: '  new name  '
     },
-    message: `Code 200: should UPDATE an item changing the name to 'new name'`
+    message: `Code 200: should UPDATE an item changing the NAME to 'new name'`
+  },
+  {
+    newItem: {
+      email: 'user0001@ikobit.com'
+    },
+    message: `Code 200: should UPDATE an item changing the EMAIL to 'user0001@ikobit.com'`
+  },
+  {
+    newItem: {
+      password: 'myPa$$w0rd'
+    },
+    message: `Code 200: should UPDATE an item changing the PASSWORD to 'myPa$$w0rd'`
   }
 ];
 

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const config = require('config');
 
-const dbUri = process.env.XPIMA_DB_URI;
+const dbUri = config.get('secrets.dbUri');
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);

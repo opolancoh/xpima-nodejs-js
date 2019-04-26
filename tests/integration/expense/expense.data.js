@@ -74,7 +74,7 @@ module.exports = {
                 date: '2019-09-26',
                 paymentType: 'Bank'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if AMOUNT is missing'
         },
         {
@@ -83,7 +83,7 @@ module.exports = {
                 date: '2019-09-26',
                 paymentType: 'Cash'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if AMOUNT is not valid'
         },
         {
@@ -91,7 +91,7 @@ module.exports = {
                 amount: 1001,
                 paymentType: 'Bank'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if DATE is missing'
         },
         {
@@ -100,7 +100,7 @@ module.exports = {
                 date: '2019-02-32',
                 paymentType: 'Cash'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if DATE is not valid'
         },
         {
@@ -109,7 +109,7 @@ module.exports = {
                 date: '2019-24-30',
                 paymentType: 'Cash'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if DATE is not valid'
         },
         {
@@ -118,7 +118,7 @@ module.exports = {
                 date: '2019-4-30',
                 paymentType: 'Cash'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if DATE is not valid'
         },
         {
@@ -127,7 +127,7 @@ module.exports = {
                 date: '2019-04-3',
                 paymentType: 'Cash'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if DATE is not valid'
         },
         {
@@ -135,7 +135,7 @@ module.exports = {
                 amount: 1006,
                 date: '2019-10-19',
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if PAYMENTTYPE is missing'
         },
         {
@@ -144,7 +144,7 @@ module.exports = {
                 date: '2019-24-30',
                 paymentType: 'Other'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if PAYMENTTYPE is not valid'
         },
         {
@@ -153,7 +153,7 @@ module.exports = {
                 date: '2019-24-30',
                 paymentType: ''
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if PAYMENTTYPE is not valid'
         },
         {
@@ -163,7 +163,7 @@ module.exports = {
                 paymentType: 'Cash',
                 category: '123456'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item if CATEGORY is not valid'
         },
         {
@@ -173,12 +173,12 @@ module.exports = {
                 paymentType: 'Cash',
                 prop: 'prop'
             },
-            status: 400,
+            code: 400,
             message: 'should not CREATE an item when field/property is not allowed'
         },
         {
             body: {},
-            status: 400,
+            code: 400,
             message: 'should not CREATE an empty item/object'
         },
     ]

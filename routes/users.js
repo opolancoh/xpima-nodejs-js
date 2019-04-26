@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const service = require('../api/modules/log/log-service');
-const auth = require('../middleware/auth');
+const service = require('../api/modules/user/user-service');
 
 // Get all
 router.get('/', async (req, res) => {
@@ -21,6 +20,20 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   // try to create a new item
   const result = await service.create(req.body);
+  res.status(200).send(result);
+});
+
+// Update
+router.put('/:id', async (req, res) => {
+  // try to update an existing item
+  const result = await service.update(req.params.id, req.body);
+  res.status(200).send(result);
+});
+
+// Delete
+router.delete('/:id', async (req, res) => {
+  // try to delete an item
+  const result = await service.delete(req.params.id);
   res.status(200).send(result);
 });
 
