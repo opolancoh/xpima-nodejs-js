@@ -3,6 +3,7 @@
 
 ### Required environment variables
 - __XPIMA_DB_URI__: DB connection uri - `XPIMA_DB_URI=mongodb+srv://<user>:<password>@<server>.gcp.mongodb.net/<database>?retryWrites=true`
+- __XPIMA_JWTPK__: JWT Private Key - `XPIMA_JWTPK=jwtPrivateKey`
 
 ### Demo
 - __Front-end__: [https://xpima-reactjs-dot-xpima-cloud.appspot.com/](https://xpima-reactjs-dot-xpima-cloud.appspot.com/)
