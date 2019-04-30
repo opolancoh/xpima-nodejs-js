@@ -3,7 +3,6 @@ const _ = require('lodash');
 
 const model = require('./expense-category-model');
 const baseValidator = require('../_shared/base-validator');
-const { c400, c409 } = require('../_shared/base-response');
 
 const schema = Joi.object().keys({
   _asRequired: Joi.boolean().required(),
@@ -26,7 +25,8 @@ const findByIdValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      ...c400,
+      code: 400,
+      message: 'Invalid request data.',
       errors: validationIdResult.errors
     };
 };
@@ -44,7 +44,8 @@ const createValidation = async item => {
   // Check if name is duplicated
   if (await itemAlreadyExists(validatedItem.name)) {
     return {
-      ...c409,
+      code: 409,
+      message: 'Item already exists. create',
       errors: {
         name: [`"${validatedItem.name}" already exists.`]
       }
@@ -60,14 +61,16 @@ const updateValidation = async (id, item) => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      ...c400,
+      code: 400,
+      message: 'Invalid request data.',
       errors: validationIdResult.errors
     };
   // Validate if item is empty
   const isEmpty = _.isEmpty(item);
   if (isEmpty)
     return {
-      ...c400,
+      code: 400,
+      message: 'Invalid request data.',
       errors: {
         _: [`You must provide at least one field to be updated.`]
       }
@@ -85,7 +88,8 @@ const updateValidation = async (id, item) => {
   if (item.name) {
     if (await itemAlreadyExists(item.name, id)) {
       return {
-        ...c409,
+        code: 409,
+        message: 'Item already exists. uodate',
         errors: {
           name: [`"${item.name}" already exists.`]
         }
@@ -101,7 +105,8 @@ const deleteValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      ...c400,
+      code: 400,
+      message: 'Invalid request data.',
       errors: validationIdResult.errors
     };
 };

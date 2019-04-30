@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const _ = require('lodash');
 
-const model = require('./expense-category-model');
+const model = require('./account-model');
 const baseValidator = require('../_shared/base-validator');
 const { c400, c409 } = require('../_shared/base-response');
 
@@ -15,6 +15,16 @@ const schema = Joi.object().keys({
       then: Joi.required()
     })
     .label('Name'),
+  totalRevenues: Joi.number()
+    .positive()
+    .precision(2)
+    .default(0)
+    .label('Total Revenues'),
+  totalExpenditures: Joi.number()
+    .positive()
+    .precision(2)
+    .default(0)
+    .label('Total Expenditures'),
   description: Joi.string()
     .trim()
     .max(255)
@@ -85,7 +95,7 @@ const updateValidation = async (id, item) => {
   if (item.name) {
     if (await itemAlreadyExists(item.name, id)) {
       return {
-        ...c409,
+        ...c400,
         errors: {
           name: [`"${item.name}" already exists.`]
         }

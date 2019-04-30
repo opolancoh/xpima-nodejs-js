@@ -19,7 +19,6 @@ exports.validateSchema = (item, schema, asRequired) => {
   const result = Joi.validate(item, schema, {
     abortEarly: false
   });
-  console.log('validateSchema',JSON.stringify(item));
   delete item._asRequired;
 
   if (result.error) {

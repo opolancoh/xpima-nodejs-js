@@ -12,6 +12,8 @@ var authRouter = require('./routes/auth');
 var logsRouter = require('./routes/logs');
 var usersRouter = require('./routes/users');
 var expenseCategoriesRouter = require('./routes/expense-categories');
+var incomeCategoriesRouter = require('./routes/income-categories');
+var accountsRouter = require('./routes/accounts');
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use('/auth', authRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/expense-categories', expenseCategoriesRouter);
+app.use('/api/income-categories', incomeCategoriesRouter);
+app.use('/api/accounts', accountsRouter);
 
 // db
 require('./db/mongo-db');

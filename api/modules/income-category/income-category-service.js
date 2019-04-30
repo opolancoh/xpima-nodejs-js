@@ -1,5 +1,5 @@
-const model = require('./expense-model');
-const modelValidator = require('./expense-validator');
+const model = require('./income-category-model');
+const modelValidator = require('./income-category-validator');
 const baseService = require('../_shared/base-service');
 
 model.validator = modelValidator;

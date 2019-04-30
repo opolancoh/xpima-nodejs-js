@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const _ = require('lodash');
 
-const model = require('./expense-category-model');
+const model = require('./income-category-model');
 const baseValidator = require('../_shared/base-validator');
 const { c400, c409 } = require('../_shared/base-response');
 
