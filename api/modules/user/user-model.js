@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+const { auditSchema } = require('../_shared/base-model');
 
 // defining the schema
-const modelSchema = Schema({
+const modelSchema = new mongoose.Schema({
   name: {
     type: String,
     index: true
@@ -13,14 +13,9 @@ const modelSchema = Schema({
     index: true
   },
   password: {
-    type: String,
+    type: String
   },
-  createdAt: {
-    type: Date
-  },
-  updatedAt: {
-    type: Date
-  }
+  ...auditSchema
 });
 
 // exporting the model

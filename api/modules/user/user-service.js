@@ -4,9 +4,8 @@ const baseService = require('../_shared/base-service');
 const validationUtils = require('../../../helpers/validation-utils');
 const { c400, c404 } = require('../_shared/base-response');
 
-model.validator = modelValidator;
-model.filterableFields = ['name', 'email'];
-model.nonSelectableFields = ['password'];
+model._validator = modelValidator;
+model._validFields = { filter: ['name', 'email'], nonReturnable: ['password'] };
 
 const service = {};
 

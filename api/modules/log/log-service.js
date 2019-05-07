@@ -2,8 +2,8 @@ const model = require('./log-model');
 const modelValidator = require('./log-validator');
 const baseService = require('../_shared/base-service');
 
-model.validator = modelValidator;
-model.filterableFields = ['type'];
+model._validator = modelValidator;
+model._validFields = { filter: ['type'] };
 const service = {};
 
 service.find = async request => {

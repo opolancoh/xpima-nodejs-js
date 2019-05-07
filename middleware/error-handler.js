@@ -1,30 +1,38 @@
 const logger = require('../helpers/logger');
 const logService = require('../api/modules/log/log-service');
+const { c500 } = require('../api/modules/_shared/base-response');
 
-const logErrorToDb = async item => {
+const logToDb = async item => {
   try {
     const result = await logService.create(item);
-    if (result.code !== 201) logger.error(item.description);
-    else console.log(`#LoggedErrorToDB ${item.description}`);
-  } catch (error) {
-    console.log('#NotLoggedErrorToDB', error);
-    logger.error(`#NotLoggedErrorToDB ${error}`);
+    if (result.code !== 201) {
+      logger.error(`#LogToDbError ${item.description}`);
+    }
+  } catch (ex) {
+    console.log('#LogToDbException', ex);
+    logger.error(`#LogToDbException ${ex}`);
     logger.error(item.description);
   }
 };
 
-const errorHandler = function(err, req, res, next) {
-  const item = {
-    type: 'error',
-    timestamp: new Date(),
-    description: `#Exception ${err}`
-  };
-  logger.error(item.description);
-  logErrorToDb(item);
+const systemErrorHandler = function(err, req, res, next) {
+  customErrorHandler(err, 'error');
   res.status(200).send({
-    code: 500,
-    message: 'Internal Server Error.'
+    ...c500
   });
 };
 
-module.exports = { errorHandler, logErrorToDb };
+const customErrorHandler = function(err, level) {
+  //console.log('stack', err.stack);
+  const errorLevel = level || 'error';
+  const errorDescription = `#Exception ${err.stack}`;
+  const item = {
+    level: errorLevel,
+    timestamp: new Date(),
+    description: errorDescription
+  };
+  logger.log(errorLevel, errorDescription);
+  logToDb(item);
+};
+
+module.exports = { systemErrorHandler, customErrorHandler };

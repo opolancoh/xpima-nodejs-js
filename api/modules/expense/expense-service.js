@@ -1,306 +1,137 @@
-const config = require('config');
-const _ = require('lodash');
-const Joi = require('joi');
-
-const validationUtils = require('../../../helpers/validation-utils');
-//const baseService = require('../_shared/base-service');
-const baseModel = require('../_shared/base-model');
 const model = require('./expense-model');
+const modelValidator = require('./expense-validator');
+const baseService = require('../_shared/base-service');
+const accountService = require('../account/account-service');
 
-const modelNameSingular = 'Expense';
-const modelNamePlural = 'Expenses';
-
-const schema = Joi.object().keys({
-  isNew: Joi.boolean().required(),
-  amount: Joi.number()
-    .positive()
-    .precision(2)
-    .when('isNew', {
-      is: true,
-      then: Joi.required()
-    }),
-  date: Joi.date()
-    .iso()
-    .when('isNew', {
-      is: true,
-      then: Joi.required()
-    }),
-  description: Joi.string()
-    .trim()
-    .min(2)
-    .max(255),
-  paymentType: Joi.string()
-    .trim()
-    .valid(['cash', 'bank'])
-    .insensitive()
-    .lowercase()
-    .when('isNew', {
-      is: true,
-      then: Joi.required()
-    }),
-  category: Joi.string().regex(validationUtils.objectIdRegExp)
-});
+model._validator = modelValidator;
+model._validFields = {
+  filter: ['name', 'description'],
+  populate: ['account', 'category']
+};
 
 const service = {};
 
-service.find = async params => {
-  // set limit
-  let limit = config.get('app.items.limit');
-  if (params.limit && validationUtils.isIntegerGreaterThanZero(params.limit)) {
-    const limitParsed = params.limit * 1;
-    if (limitParsed < config.get('app.items.limitMin'))
-      limit = config.get('app.items.limitMin');
-    else
-      limit =
-        limitParsed > config.get('app.items.limitMax')
-          ? config.get('app.items.limitMax')
-          : limitParsed;
-  }
-  // set offset
-  let offset = 0;
-  if (
-    params.offset &&
-    validationUtils.isIntegerGreaterThanZero(params.offset)
-  ) {
-    offset = params.offset * 1;
-  }
-  // set sort
-  let sortAggregation = {};
-  if (params.sort) {
-    params.sort.split(',').forEach(element => {
-      let propName = element;
-      let isAsc = true;
+service.find = async request => {
+  return await baseService.find(request, model);
+};
 
-      const sortOrder = element.substring(0, 1);
-      if (sortOrder === '-' || sortOrder === ' ' || sortOrder === '+') {
-        propName = element.substring(1, element.length);
-        if (sortOrder === '-') isAsc = false;
-      }
+service.findById = async (id, query) => {
+  return await baseService.findById(id, query, model);
+};
 
-      if (model.schema.paths.hasOwnProperty(propName)) {
-        sortAggregation[propName] = isAsc ? 1 : -1;
-      }
-    });
-  }
-  // set select
-  let selectAggregation = '';
-  if (params.select) {
-    params.select.split(',').forEach(element => {
-      if (model.schema.paths.hasOwnProperty(element))
-        selectAggregation += ` ${element}`;
-    });
-  }
-  // set filter
-  let filterAggregation = {};
-  /*if (params.q) {
-            params.q.split(',').forEach(element => {
-                if (model.schema.paths.hasOwnProperty(element))
-                filterAggregation += ` ${element}`;
-            });
-        }*/
+service.create = async body => {
+  const createResult = await baseService.create(body, model);
+  if (createResult.errors) return createResult;
 
-  const _meta = {
-    offset,
-    limit
-  };
-
-  const query = model
-    .find(filterAggregation)
-    .skip(offset)
-    .limit(limit)
-    .populate('category', 'name')
-    .sort(sortAggregation)
-    .select(selectAggregation);
-
-  const data = await query.exec();
-
-  // set totalCount
-  if (params.limit || params.offset) {
-    if (data.length > 0)
-      _meta.totalCount = await model
-        .find(filterAggregation)
-        .countDocuments()
-        .exec();
-    else _meta.totalCount = 0;
-  }
+  const updateBalanceResult = await accountService.updateBalance({
+    id: createResult.d.account,
+    income: 0,
+    expenditure: createResult.d.amount
+  });
+  if (updateBalanceResult.errors) return updateBalanceResult;
 
   return {
-    status: 'success',
-    response: {
-      _meta,
-      data
-    }
+    code: 201,
+    d: createResult.d
   };
 };
 
-service.findById = async id => {
-  // validate id
-  const validationIdResult = baseService.validateId(id);
-  if (validationIdResult)
-    return {
-      status: validationIdResult.status,
-      response: {
-        message: validationIdResult.message,
-        errors: validationIdResult.errors
-      }
-    };
+service.update = async (id, body) => {
+  // Input and business validation
+  const validationResult = await model._validator.updateValidation(id, body);
+  if (validationResult.errors) return validationResult;
 
-  const itemFound = await model.findById(id).populate('category', 'name');
-  if (itemFound)
-    return {
-      status: 'success',
-      response: itemFound
-    };
-  else
-    return {
-      status: 'not-found',
-      response: {
-        message: `Item with id '${id}' was not found, or you do not have permission to access it.`
-      }
-    };
-};
+  const item = validationResult.validatedItem;
 
-service.create = async item => {
-  // validate item
-  item.isNew = true;
-  const validationResult = baseService.validateItem(item, schema);
-  if (validationResult)
-    return {
-      status: 'item-not-valid',
-      response: {
-        message: validationResult.message,
-        errors: validationResult.errors
-      }
-    };
-
-  // format data structure
-  formatItem(item);
-
-  // try to create a new item
-  const now = new Date();
-  item.createdAt = now;
-  item.updatedAt = now;
-
-  if (item.category) {
-    item.category = baseModel.parseObjectId(item.category);
+  let oldAmount;
+  if (body.amount) {
+    // Get current amount
+    const expenseResult = await service.findById(id, {
+      select: 'amount'
+    });
+    if (expenseResult.errors) return expenseResult;
+    oldAmount = expenseResult.d.amount;
   }
 
-  delete item.isNew;
-  const itemCreated = await model.create(item);
-
-  return {
-    status: 'success',
-    response: itemCreated
-  };
-};
-
-service.update = async (id, item) => {
-  // validate id
-  const validationIdResult = baseService.validateId(id);
-  if (validationIdResult)
-    return {
-      status: validationIdResult.status,
-      response: {
-        message: validationIdResult.message,
-        errors: validationIdResult.errors
-      }
-    };
-
-  // validate item
-  const isEmpty = _.isEmpty(item);
-  if (isEmpty)
-    return {
-      status: 'item-not-valid',
-      response: {
-        message: 'Invalid request data.',
-        errors: [
-          {
-            field: '',
-            message: `You must provide at least one filed to be updated.`
-          }
-        ]
-      }
-    };
-
-  item.isNew = false;
-  const validationResult = baseService.validateItem(item, schema);
-  if (validationResult)
-    return {
-      status: 'item-not-valid',
-      response: {
-        message: validationResult.message,
-        errors: validationResult.errors
-      }
-    };
-
-  // format data structure
-  formatItem(item);
-
-  // try to update an item
+  // Update
   item.updatedAt = new Date();
-  delete item.isNew;
-  const itemUpdated = await model
-    .findOneAndUpdate(
-      {
-        _id: id
-      },
-      item,
-      {
-        new: true
-      }
-    )
-    .populate('category', 'name');
+  const itemUpdated = await model.findOneAndUpdate(
+    {
+      _id: id
+    },
+    item,
+    {
+      new: true
+    }
+  );
 
-  if (itemUpdated)
+  if (itemUpdated) {
+    // Delete fields that are not returnable
+    if (model._validFields.nonReturnable) {
+      deleteNonReturnableFieldsFromObject(
+        itemUpdated,
+        model._validFields.nonReturnable
+      );
+    }
+    // If amount is sent then update balance
+    if (body.amount) {
+      const updateBalanceResult = await accountService.updateBalance({
+        id: itemUpdated.account,
+        income: 0,
+        expenditure: itemUpdated.amount - oldAmount
+      });
+      if (updateBalanceResult.errors) return updateBalanceResult;
+    }
     return {
-      status: 'success',
-      response: itemUpdated
+      code: 200,
+      d: itemUpdated
     };
-  else
+  } else
     return {
-      status: 'not-found',
-      response: {
-        message: `Item with id '${id}' was not found, or you do not have permission to access it.`
+      ...c404,
+      errors: {
+        id: [
+          `The specified item Id '${id}' was not found, or you do not have permission to access it.`
+        ]
       }
     };
 };
 
 service.delete = async id => {
-  // validate id
-  const validationIdResult = baseService.validateId(id);
-  if (validationIdResult)
-    return {
-      status: validationIdResult.status,
-      response: {
-        message: validationIdResult.message,
-        errors: validationIdResult.errors
-      }
-    };
+  // Input and business validation
+  const validationResult = await model._validator.deleteValidation(id);
+  if (validationResult) return validationResult;
 
-  // try to delete an item
+  // Get amount and accountId
+  const expenseResult = await service.findById(id, {
+    select: 'amount,account'
+  });
+  if (expenseResult.errors) return expenseResult;
+
+  // Delete
   const itemDeleted = await model.findOneAndDelete({
     _id: id
   });
-  if (itemDeleted)
+  if (itemDeleted) {
+    // Update balance
+    const updateBalanceResult = await accountService.updateBalance({
+      id: expenseResult.d.account,
+      income: 0,
+      expenditure: -expenseResult.d.amount
+    });
+    if (updateBalanceResult.errors) return updateBalanceResult;
     return {
-      status: 'success',
-      response: {
-        message: `Item with id '${id}' was deleted successfully.`
+      code: 200
+    };
+  } else
+    return {
+      ...c404,
+      errors: {
+        id: [
+          `The specified item Id '${id}' was not found, or you do not have permission to access it.`
+        ]
       }
     };
-  else
-    return {
-      status: 'not-found',
-      response: {
-        message: `Item with id '${id}' was not found, or you do not have permission to access it.`
-      }
-    };
-};
-
-const formatItem = item => {
-  if (item.description) item.description = item.description.trim();
-  if (item.paymentType)
-    item.paymentType = _.capitalize(item.paymentType.trim());
 };
 
 module.exports = service;

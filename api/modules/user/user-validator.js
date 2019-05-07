@@ -8,12 +8,12 @@ const { c400, c409 } = require('../_shared/base-response');
 const { getSalt, getHashed } = require('../../../helpers/security-utils');
 
 const schema = Joi.object().keys({
-  _asRequired: Joi.boolean().required(),
+  _asNewRecord: Joi.boolean().required(),
   name: Joi.string()
     .trim()
     .min(3)
     .max(30)
-    .when('_asRequired', {
+    .when('_asNewRecord', {
       is: true,
       then: Joi.required()
     })
@@ -21,7 +21,7 @@ const schema = Joi.object().keys({
   email: Joi.string()
     .regex(validationUtils.emailRegExp)
     .max(60)
-    .when('_asRequired', {
+    .when('_asNewRecord', {
       is: true,
       then: Joi.required()
     })
@@ -30,7 +30,7 @@ const schema = Joi.object().keys({
     .trim()
     .min(6)
     .max(60)
-    .when('_asRequired', {
+    .when('_asNewRecord', {
       is: true,
       then: Joi.required()
     })

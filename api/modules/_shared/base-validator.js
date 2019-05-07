@@ -15,12 +15,11 @@ exports.validateId = id => {
 
 exports.validateSchema = (item, schema, asRequired) => {
   let errors;
-  if (typeof asRequired === 'boolean') item._asRequired = asRequired;
+  if (typeof asRequired === 'boolean') item._asNewRecord = asRequired;
   const result = Joi.validate(item, schema, {
     abortEarly: false
   });
-  console.log('validateSchema',JSON.stringify(item));
-  delete item._asRequired;
+  delete item._asNewRecord;
 
   if (result.error) {
     errors = {};

@@ -2,8 +2,8 @@ const model = require('./expense-category-model');
 const modelValidator = require('./expense-category-validator');
 const baseService = require('../_shared/base-service');
 
-model.validator = modelValidator;
-model.filterableFields = ['name', 'description'];
+model._validator = modelValidator;
+model._validFields = { filter: ['name', 'description'] };
 
 const service = {};
 

@@ -4,7 +4,7 @@ const validationUtils = require('../helpers/validation-utils');
 
 const utils = {};
 
-utils.getQueryParams = (query, modelFields, filterableFields) => {
+utils.getQueryParams = (query, modelFields, validFields) => {
   let params = {};
   // set limit
   // limit=5
@@ -55,14 +55,35 @@ utils.getQueryParams = (query, modelFields, filterableFields) => {
   // set filter
   // search=name:in|description:desc
   params.filter = {};
-  if (filterableFields && query.search) {
+  if (validFields.filter && query.search) {
     query.search.split('|').forEach(element => {
       const index = element.indexOf(':');
       if (index !== -1) {
         const propName = element.substring(0, index);
-        const searchText = element.substring(index + 1, element.length);
-        if (filterableFields.indexOf(propName) !== -1) {
+        if (validFields.filter.indexOf(propName) !== -1) {
+          const searchText = element.substring(index + 1, element.length);
           params.filter[propName] = new RegExp(searchText, 'i');
+        }
+      }
+    });
+  }
+  // set populate
+  // populate=category:name,updatedAt|account:name
+  // [{ path: 'category', select: 'name createdAt' },{ path: 'account', select: 'name' }]
+  params.populate = [];
+  if (validFields.populate && query.populate) {
+    query.populate.split('|').forEach(element => {
+      const colonIndex = element.indexOf(':');
+      if (colonIndex !== -1) {
+        const propName = element.substring(0, colonIndex);
+        if (validFields.populate.indexOf(propName) !== -1) {
+          const listFields = element.substring(colonIndex + 1, element.length);
+          const fields = [];
+          listFields.split(',').forEach(item => {
+            fields.push(item);
+          });
+          if (fields.length > 0)
+            params.populate.push({ path: propName, select: fields.join(' ') });
         }
       }
     });

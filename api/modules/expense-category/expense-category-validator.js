@@ -3,13 +3,14 @@ const _ = require('lodash');
 
 const model = require('./expense-category-model');
 const baseValidator = require('../_shared/base-validator');
+const { c400, c409 } = require('../_shared/base-response');
 
 const schema = Joi.object().keys({
-  _asRequired: Joi.boolean().required(),
+  _asNewRecord: Joi.boolean().required(),
   name: Joi.string()
     .trim()
     .max(30)
-    .when('_asRequired', {
+    .when('_asNewRecord', {
       is: true,
       then: Joi.required()
     })
@@ -25,8 +26,7 @@ const findByIdValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
 };
@@ -38,16 +38,13 @@ const createValidation = async item => {
     schema,
     true
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
-
-  console.log('createValidation',JSON.stringify(validatedItem));
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
   // Check if name is duplicated
   if (await itemAlreadyExists(validatedItem.name)) {
     return {
-      code: 409,
-      message: 'Item already exists. create',
+      ...c409,
       errors: {
         name: [`"${validatedItem.name}" already exists.`]
       }
@@ -63,16 +60,14 @@ const updateValidation = async (id, item) => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
   // Validate if item is empty
   const isEmpty = _.isEmpty(item);
   if (isEmpty)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: {
         _: [`You must provide at least one field to be updated.`]
       }
@@ -83,15 +78,14 @@ const updateValidation = async (id, item) => {
     schema,
     false
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
   // Check if name is duplicated
   if (item.name) {
     if (await itemAlreadyExists(item.name, id)) {
       return {
-        code: 409,
-        message: 'Item already exists. uodate',
+        ...c409,
         errors: {
           name: [`"${item.name}" already exists.`]
         }
@@ -107,8 +101,7 @@ const deleteValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
 };
