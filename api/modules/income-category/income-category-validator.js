@@ -6,11 +6,11 @@ const baseValidator = require('../_shared/base-validator');
 const { c400, c409 } = require('../_shared/base-response');
 
 const schema = Joi.object().keys({
-  _asRequired: Joi.boolean().required(),
+  _asNewRecord: Joi.boolean().required(),
   name: Joi.string()
     .trim()
     .max(30)
-    .when('_asRequired', {
+    .when('_asNewRecord', {
       is: true,
       then: Joi.required()
     })
@@ -38,7 +38,7 @@ const createValidation = async item => {
     schema,
     true
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
   // Check if name is duplicated
@@ -78,7 +78,7 @@ const updateValidation = async (id, item) => {
     schema,
     false
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
   // Check if name is duplicated

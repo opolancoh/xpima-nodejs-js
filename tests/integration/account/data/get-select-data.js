@@ -7,7 +7,15 @@ const data = [
         type: 'string'
       }
     ],
-    shouldNotHaveFields: ['description', 'createdAt', 'updatedAt']
+    shouldNotHaveFields: [
+      'type',
+      'balance',
+      'totalRevenue',
+      'totalExpenses',
+      'description',
+      'createdAt',
+      'updatedAt'
+    ]
   },
   {
     query: 'select=description',
@@ -17,7 +25,15 @@ const data = [
         type: 'string'
       }
     ],
-    shouldNotHaveFields: ['name', 'createdAt', 'updatedAt']
+    shouldNotHaveFields: [
+      'name',
+      'type',
+      'balance',
+      'totalRevenue',
+      'totalExpenses',
+      'createdAt',
+      'updatedAt'
+    ]
   },
   {
     query: 'select=description,name',
@@ -31,18 +47,47 @@ const data = [
         type: 'string'
       }
     ],
-    shouldNotHaveFields: ['createdAt', 'updatedAt']
+    shouldNotHaveFields: [
+      'type',
+      'balance',
+      'totalRevenue',
+      'totalExpenses',
+      'createdAt',
+      'updatedAt',
+      'createdAt',
+      'updatedAt'
+    ]
   },
   {
     query: '',
     shouldHaveFields: [
       {
+        name: '_id',
+        type: 'string'
+      },
+      {
         name: 'name',
         type: 'string'
       },
       {
+        name: 'type',
+        type: 'string'
+      },
+      {
+        name: 'balance',
+        type: 'number'
+      },
+      {
         name: 'description',
         type: 'string'
+      },
+      {
+        name: 'totalRevenue',
+        type: 'number'
+      },
+      {
+        name: 'totalExpenses',
+        type: 'number'
       },
       {
         name: 'createdAt',

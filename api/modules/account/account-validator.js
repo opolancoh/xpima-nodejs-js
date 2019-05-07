@@ -6,25 +6,27 @@ const baseValidator = require('../_shared/base-validator');
 const { c400, c409 } = require('../_shared/base-response');
 
 const schema = Joi.object().keys({
-  _asRequired: Joi.boolean().required(),
+  _asNewRecord: Joi.boolean().required(),
   name: Joi.string()
     .trim()
     .max(30)
-    .when('_asRequired', {
+    .when('_asNewRecord', {
       is: true,
       then: Joi.required()
     })
     .label('Name'),
-  totalRevenues: Joi.number()
-    .positive()
+  type: Joi.string()
+    .valid('cash', 'creditCard', 'bankAccount')
+    .when('_asNewRecord', {
+      is: true,
+      then: Joi.required()
+    })
+    .label('Type'),
+  balance: Joi.number()
+    .min(0)
     .precision(2)
     .default(0)
-    .label('Total Revenues'),
-  totalExpenditures: Joi.number()
-    .positive()
-    .precision(2)
-    .default(0)
-    .label('Total Expenditures'),
+    .label('Balance'),
   description: Joi.string()
     .trim()
     .max(255)
@@ -48,7 +50,7 @@ const createValidation = async item => {
     schema,
     true
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
   // Check if name is duplicated
@@ -60,6 +62,8 @@ const createValidation = async item => {
       }
     };
   }
+  validatedItem.totalRevenue = 0;
+  validatedItem.totalExpenses = 0;
 
   return { validatedItem };
 };
@@ -88,9 +92,18 @@ const updateValidation = async (id, item) => {
     schema,
     false
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
+  // Check if balance exists
+  if (item.balance) {
+    return {
+      ...c400,
+      errors: {
+        balance: [`Balance is not allowed to be updated.`]
+      }
+    };
+  }
   // Check if name is duplicated
   if (item.name) {
     if (await itemAlreadyExists(item.name, id)) {
@@ -102,6 +115,8 @@ const updateValidation = async (id, item) => {
       };
     }
   }
+
+  delete validatedItem.balance;
 
   return { validatedItem };
 };

@@ -1,18 +1,11 @@
 const logger = require('../helpers/logger');
-const { logErrorToDb } = require('./error-handler');
+const { customErrorHandler } = require('./error-handler');
 
 module.exports = function(req, res, next) {
-  const item = {
-    type: 'warn',
-    timestamp: new Date(),
-    description: (description = `#NotFound The requested url '${
-      req.url
-    }' was Not Found.`)
-  };
-  logger.warn(item.description);
-  logErrorToDb(item);
+  const message = `The requested url '${req.url}' was Not Found.`;
+  customErrorHandler(Error(`#NotFound ${message}`), 'warn');
   res.status(200).send({
     code: 404,
-    message: item.description
+    message
   });
 };

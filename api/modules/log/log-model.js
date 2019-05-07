@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
-
 // defining the schema
-const modelSchema = Schema({
+const modelSchema = new mongoose.Schema({
   level: {
     type: String,
     index: true

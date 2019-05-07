@@ -2,32 +2,19 @@ const data = [
   {
     body: {
       name: 'Visa',
-      totalRevenues: -1,
+      balance: -1,
       totalExpenditures: -1
     },
     code: 400,
-    message:
-      'should not CREATE an item if totalRevenues and totalExpenditures is -1'
+    message: 'should not CREATE an item if Balance is -1'
   },
   {
     body: {
       name: 'Visa',
-      totalRevenues: 0,
-      totalExpenditures: 0
+      balance: 9007199254740992
     },
     code: 400,
-    message:
-      'should not CREATE an item if totalRevenues and totalExpenditures is 0'
-  },
-  {
-    body: {
-      name: 'Visa',
-      totalRevenues: 0,
-      totalExpenditures: 0
-    },
-    code: 400,
-    message:
-      'should not CREATE an item if totalRevenues and totalExpenditures are greater thN (2^53)-1'
+    message: 'should not CREATE an item if Balance is greater than (2^53)-1'
   },
   {
     body: {
@@ -50,7 +37,8 @@ const data = [
   },
   {
     body: {
-      name: 'Visa'
+      name: 'Visa',
+      type: 'creditCard'
     },
     code: 409,
     message: 'should not CREATE a duplicated item'

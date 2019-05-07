@@ -19,14 +19,14 @@ describe(`PUT ${apiUrl}${resourceSuffix}/:id`, () => {
       const res = await request(apiUrl)
         .put(`${resourceSuffix}/${item._id}`)
         .send(newItem);
-      
+
       expect(res.status).to.equal(200);
 
       expect(res.body)
         .to.have.a.property('code')
         .to.be.a('number')
         .to.equal(200);
-      
+
       expect(res.body)
         .to.have.a.property('d')
         .to.be.an('object');
@@ -35,14 +35,14 @@ describe(`PUT ${apiUrl}${resourceSuffix}/:id`, () => {
         .to.have.a.property('_id')
         .to.be.a('string');
       expect(res.body.d)
-        .to.have.a.property('name', 'new name')
-        .to.be.a('string');
-      expect(res.body.d)
         .to.have.a.property('createdAt')
         .to.be.a('string');
       expect(res.body.d)
         .to.have.a.property('updatedAt')
         .to.be.a('string');
+      Object.keys(newItem).forEach(key => {
+        expect(res.body.d).to.have.a.property(key, newItem[key]);
+      });
     });
     invalidData.forEach(element => {
       it(element.message(), async () => {

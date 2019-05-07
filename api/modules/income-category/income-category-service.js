@@ -2,8 +2,8 @@ const model = require('./income-category-model');
 const modelValidator = require('./income-category-validator');
 const baseService = require('../_shared/base-service');
 
-model.validator = modelValidator;
-model.filterableFields = ['name', 'description'];
+model._validator = modelValidator;
+model._validFields = { filter: ['name', 'description'] };
 
 const service = {};
 

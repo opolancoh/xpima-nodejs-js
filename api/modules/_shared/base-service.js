@@ -9,11 +9,12 @@ baseService.find = async (request, model) => {
     offset,
     sort,
     select,
-    filter
+    filter,
+    populate
   } = transformationUtils.getQueryParams(
     request.query,
     model.schema.paths,
-    model.filterableFields
+    model._validFields
   );
 
   const _meta = {
@@ -28,6 +29,7 @@ baseService.find = async (request, model) => {
     .limit(limit)
     .sort(sort)
     .select(select)
+    .populate(populate)
     .exec();
 
   // set totalCount
@@ -41,8 +43,8 @@ baseService.find = async (request, model) => {
   }
 
   // Delete fields that are not returnable
-  if (model.nonSelectableFields)
-    deleteNonSelectableFieldsFromArray(data, model.nonSelectableFields);
+  if (model._validFields.nonReturnable)
+    deleteNonReturnableFieldsFromArray(data, model._validFields.nonReturnable);
 
   return {
     code: 200,
@@ -53,12 +55,13 @@ baseService.find = async (request, model) => {
 
 baseService.findById = async (id, queryString, model) => {
   // Input and business validation
-  const validationResult = await model.validator.findByIdValidation(id);
+  const validationResult = await model._validator.findByIdValidation(id);
   if (validationResult) return validationResult;
 
   const { select } = transformationUtils.getQueryParams(
     queryString,
-    model.schema.paths
+    model.schema.paths,
+    model._validFields
   );
 
   const query = model.findById(id).select(select);
@@ -66,8 +69,11 @@ baseService.findById = async (id, queryString, model) => {
   const itemFound = await query.exec();
   if (itemFound) {
     // Delete fields that are not returnable
-    if (model.nonSelectableFields)
-      deleteNonSelectableFieldsFromObject(itemFound, model.nonSelectableFields);
+    if (model._validFields.nonReturnable)
+      deleteNonReturnableFieldsFromObject(
+        itemFound,
+        model._validFields.nonReturnable
+      );
     return {
       code: 200,
       d: itemFound
@@ -83,9 +89,9 @@ baseService.findById = async (id, queryString, model) => {
     };
 };
 
-baseService.create = async (body, model) => {
+baseService.create = async (body, model, callback) => {
   // Input and business validation
-  const validationResult = await model.validator.createValidation(body);
+  const validationResult = await model._validator.createValidation(body);
   if (validationResult.errors) return validationResult;
 
   const item = validationResult.validatedItem;
@@ -97,8 +103,11 @@ baseService.create = async (body, model) => {
   let itemCreated = await model.create(item);
 
   // Delete fields that are not returnable
-  if (model.nonSelectableFields)
-    deleteNonSelectableFieldsFromObject(itemCreated, model.nonSelectableFields);
+  if (model._validFields.nonReturnable)
+    deleteNonReturnableFieldsFromObject(
+      itemCreated,
+      model._validFields.nonReturnable
+    );
 
   return {
     code: 201,
@@ -108,7 +117,7 @@ baseService.create = async (body, model) => {
 
 baseService.update = async (id, body, model) => {
   // Input and business validation
-  const validationResult = await model.validator.updateValidation(id, body);
+  const validationResult = await model._validator.updateValidation(id, body);
   if (validationResult.errors) return validationResult;
 
   const item = validationResult.validatedItem;
@@ -127,10 +136,10 @@ baseService.update = async (id, body, model) => {
 
   if (itemUpdated) {
     // Delete fields that are not returnable
-    if (model.nonSelectableFields)
-      deleteNonSelectableFieldsFromObject(
+    if (model._validFields.nonReturnable)
+      deleteNonReturnableFieldsFromObject(
         itemUpdated,
-        model.nonSelectableFields
+        model._validFields.nonReturnable
       );
     return {
       code: 200,
@@ -149,7 +158,7 @@ baseService.update = async (id, body, model) => {
 
 baseService.delete = async (id, model) => {
   // Input and business validation
-  const validationResult = await model.validator.deleteValidation(id);
+  const validationResult = await model._validator.deleteValidation(id);
   if (validationResult) return validationResult;
 
   // Delete
@@ -171,15 +180,15 @@ baseService.delete = async (id, model) => {
     };
 };
 
-/*const getSelectableFields = (select, nonSelectableFields) => {
+/*const getSelectableFields = (select, nonReturnableFields) => {
   let selectableFields = select;
-  if (nonSelectableFields) {
+  if (nonReturnableFields) {
     const selectFiltered = select.filter(function(e) {
       return this.indexOf(e) < 0;
-    }, nonSelectableFields);
+    }, nonReturnableFields);
 
     selectableFields = selectFiltered.concat(
-      nonSelectableFields.map(item => {
+      nonReturnableFields.map(item => {
         return '-' + item;
       })
     );
@@ -187,13 +196,13 @@ baseService.delete = async (id, model) => {
   return selectableFields;
 };*/
 
-const deleteNonSelectableFieldsFromObject = (obj, nonSelectableFields) => {
-  nonSelectableFields.forEach(element => delete obj._doc[element]);
+const deleteNonReturnableFieldsFromObject = (obj, nonReturnableFields) => {
+  nonReturnableFields.forEach(element => delete obj._doc[element]);
 };
 
-const deleteNonSelectableFieldsFromArray = (arr, nonSelectableFields) => {
+const deleteNonReturnableFieldsFromArray = (arr, nonReturnableFields) => {
   arr.forEach(item => {
-    nonSelectableFields.forEach(element => delete item._doc[element]);
+    nonReturnableFields.forEach(element => delete item._doc[element]);
   });
 };
 

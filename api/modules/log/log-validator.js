@@ -2,6 +2,7 @@ const Joi = require('joi');
 const _ = require('lodash');
 
 const baseValidator = require('../_shared/base-validator');
+const { c400 } = require('../_shared/base-response');
 
 const schema = Joi.object().keys({
   level: Joi.string()
@@ -20,8 +21,7 @@ const findByIdValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
 };
@@ -29,7 +29,7 @@ const findByIdValidation = id => {
 const createValidation = async item => {
   /** Input Validation **/
   const { validatedItem, errors } = baseValidator.validateSchema(item, schema);
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
 

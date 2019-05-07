@@ -1,32 +1,56 @@
 const Joi = require('joi');
 const _ = require('lodash');
 
-const model = require('./expense-category-model');
+const model = require('./expense-model');
 const baseValidator = require('../_shared/base-validator');
+const validationUtils = require('../../../helpers/validation-utils');
+const { c400, c409 } = require('../_shared/base-response');
+const accountService = require('../account/account-service');
+const categoryService = require('../expense-category/expense-category-service');
 
-const schema = Joi.object().keys({
-  _asRequired: Joi.boolean().required(),
-  name: Joi.string()
-    .trim()
-    .max(30)
-    .when('_asRequired', {
-      is: true,
-      then: Joi.required()
-    })
-    .label('Name'),
-  description: Joi.string()
-    .trim()
-    .max(255)
-    .label('Description')
-});
+const schema = Joi.object()
+  .keys({
+    _asNewRecord: Joi.boolean().required(),
+    amount: Joi.number()
+      .positive()
+      .precision(2)
+      .when('_asNewRecord', {
+        is: true,
+        then: Joi.required()
+      })
+      .label('Amount'),
+    account: Joi.string()
+      .regex(validationUtils.objectIdRegExp)
+      .when('_asNewRecord', {
+        is: true,
+        then: Joi.required()
+      })
+      .label('Account'),
+    date: Joi.date()
+      .when('_asNewRecord', {
+        is: true,
+        then: Joi.required()
+      })
+      .label('Date'),
+    category: Joi.string()
+      .regex(validationUtils.objectIdRegExp)
+      .when('_asNewRecord', {
+        is: true,
+        then: Joi.required()
+      })
+      .label('Category'),
+    description: Joi.string()
+      .trim()
+      .max(255)
+      .label('Description')
+  });
 
 const findByIdValidation = id => {
   // Validate id
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
 };
@@ -38,20 +62,27 @@ const createValidation = async item => {
     schema,
     true
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
-  // Check if name is duplicated
-  if (await itemAlreadyExists(validatedItem.name)) {
+  // Check if Account and Category exists
+  const accountResult = await accountService.findById(item.account, {
+    select: '_id,totalRevenue,totalExpenses'
+  });
+  if (accountResult.errors) {
     return {
-      code: 409,
-      message: 'Item already exists. create',
-      errors: {
-        name: [`"${validatedItem.name}" already exists.`]
-      }
+      ...c400,
+      errors: { account: accountResult.errors.id }
     };
   }
-
+  const categoryResult = await categoryService.findById(item.category, {
+    select: '_id'
+  });
+  if (categoryResult.errors)
+    return {
+      ...c400,
+      errors: { category: categoryResult.errors.id }
+    };
   return { validatedItem };
 };
 
@@ -61,16 +92,14 @@ const updateValidation = async (id, item) => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
   // Validate if item is empty
   const isEmpty = _.isEmpty(item);
   if (isEmpty)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: {
         _: [`You must provide at least one field to be updated.`]
       }
@@ -81,21 +110,9 @@ const updateValidation = async (id, item) => {
     schema,
     false
   );
-  if (errors) return { code: 400, message: 'Invalid request data.', errors };
+  if (errors) return { ...c400, errors };
 
   /** Business Logic **/
-  // Check if name is duplicated
-  if (item.name) {
-    if (await itemAlreadyExists(item.name, id)) {
-      return {
-        code: 409,
-        message: 'Item already exists. uodate',
-        errors: {
-          name: [`"${item.name}" already exists.`]
-        }
-      };
-    }
-  }
 
   return { validatedItem };
 };
@@ -105,26 +122,9 @@ const deleteValidation = id => {
   const validationIdResult = baseValidator.validateId(id);
   if (validationIdResult)
     return {
-      code: 400,
-      message: 'Invalid request data.',
+      ...c400,
       errors: validationIdResult.errors
     };
-};
-
-const itemAlreadyExists = async (name, id) => {
-  const itemFound = await model.findOne(
-    {
-      name: name
-    },
-    '_id'
-  );
-  // If item was not found
-  if (!itemFound) return false;
-  // If item was found and id is undefined (Create Item)
-  if (!id) return true;
-  // If item was found and id has a value (Update Item)
-  if (id === itemFound._id.toString()) return false;
-  else return true;
 };
 
 module.exports = {
