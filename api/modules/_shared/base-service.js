@@ -33,7 +33,7 @@ baseService.find = async (request, model) => {
     .exec();
 
   // set totalCount
-  if (request.headers['x-request-count-total'] === 'true') {
+  if (request.headers['x-request-total-count'] === 'true') {
     if (data.length > 0) {
       _meta.totalCount = await model
         .find(filter)

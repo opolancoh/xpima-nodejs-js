@@ -1,3 +1,7 @@
+const baseInvalidData = require('../../_shared/data/base-invalid-data').getData(
+  'CREATE'
+);
+
 const invalidData = [
   {
     body: {
@@ -203,22 +207,7 @@ const invalidData = [
     }
   },
   //
-  {
-    body: {
-      prop: 'prop'
-    },
-    code: 400,
-    message: function() {
-      return `should not CREATE an item when field/property is not allowed`;
-    }
-  },
-  {
-    body: {},
-    code: 400,
-    message: function() {
-      return `should not CREATE an empty item/object`;
-    }
-  }
+  ...baseInvalidData
 ];
 
 module.exports = invalidData;

@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 
 const paginationData = require('./data/get-pagination-data');
 const selectData = require('./data/get-select-data');
-const countTotal = require('./data/post-valid-data').length;
+const totalCount = require('./data/post-valid-data').length;
 const { apiUrl, resourceSuffix } = require('./_params');
 
 describe(`GET ${apiUrl}${resourceSuffix}`, () => {
@@ -34,7 +34,7 @@ describe(`GET ${apiUrl}${resourceSuffix}`, () => {
         .to.be.a('number')
         .to.equal(item.offset);
 
-      expect(res.body._meta).to.not.have.a.property('countTotal');
+      expect(res.body._meta).to.not.have.a.property('totalCount');
 
       expect(res.body)
         .to.have.a.property('d')
@@ -43,10 +43,10 @@ describe(`GET ${apiUrl}${resourceSuffix}`, () => {
     });
   });
   // CountTotal
-  it(`Code 200: [pagination] should GET _meta.totalCount property when request adds a 'x-request-count-total' header`, async () => {
+  it(`Code 200: [pagination] should GET _meta.totalCount property when request adds a 'x-request-total-count' header`, async () => {
     const res = await request(apiUrl)
       .get(`${resourceSuffix}`)
-      .set('x-request-count-total', 'true');
+      .set('x-request-total-count', 'true');
 
     expect(res.status).to.equal(200);
 
@@ -54,7 +54,7 @@ describe(`GET ${apiUrl}${resourceSuffix}`, () => {
       .to.have.a.property('_meta')
       .to.have.a.property('totalCount')
       .to.be.a('number')
-      .to.equal(countTotal);
+      .to.equal(totalCount);
   });
   // Select
   selectData.forEach(item => {

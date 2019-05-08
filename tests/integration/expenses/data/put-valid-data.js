@@ -39,7 +39,7 @@ const validData = [
       description: 'New description!!'
     },
     message: function() {
-      return `should UPDATE an item changing AMOUNT to '${
+      return `should UPDATE an item changing DESCRIPTION to '${
         this.body.description
       }'`;
     }

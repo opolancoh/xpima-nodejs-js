@@ -3,22 +3,13 @@ const { createValidDataForGetSelect } = require('../../_shared/actions');
 
 const validData = [
   {
-    query: 'select=amount'
-  },
-  {
-    query: 'select=account'
-  },
-  {
-    query: 'select=date'
-  },
-  {
-    query: 'select=category'
+    query: 'select=name'
   },
   {
     query: 'select=description'
   },
   {
-    query: 'select=_id'
+    query: 'select=description,name'
   },
   {
     query: ''

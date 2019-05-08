@@ -2,7 +2,7 @@ const config = require('config');
 
 const defaultRowLimit = config.get('app.items.limit');
 const defaultMaxRowLimit = config.get('app.items.limitMax');
-const countTotal = require('./post-valid-data').length;
+const totalCount = require('./post-valid-data').length;
 
 const data = [
   {
@@ -15,31 +15,31 @@ const data = [
     query: '',
     limit: defaultRowLimit,
     offset: 0,
-    dataLength: countTotal
+    dataLength: totalCount
   },
   {
     query: '?limit=0&offset=0',
     limit: defaultRowLimit,
     offset: 0,
-    dataLength: countTotal
+    dataLength: totalCount
   },
   {
     query: '?limit=-1&offset=-2',
     limit: defaultRowLimit,
     offset: 0,
-    dataLength: countTotal
+    dataLength: totalCount
   },
   {
     query: '?limit=a&offset=b',
     limit: defaultRowLimit,
     offset: 0,
-    dataLength: countTotal
+    dataLength: totalCount
   },
   {
     query: '?limit=10000',
     limit: defaultMaxRowLimit,
     offset: 0,
-    dataLength: countTotal
+    dataLength: totalCount
   },
   {
     query: '?limit=9&offset=100',

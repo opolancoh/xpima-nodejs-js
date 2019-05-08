@@ -1,0 +1,1 @@
+exports.resourceSuffix = '/expense-categories';

@@ -9,7 +9,7 @@ const { resourceSuffix } = require('./_params');
 const { resourceSuffix: accountResourceSuffix } = require('../account/_params');
 const {
   resourceSuffix: categoryResourceSuffix
-} = require('../expense-category/_params');
+} = require('../expense-categories/_params');
 
 describe(`PUT ${apiUrl}${resourceSuffix}/:id`, () => {
   let dataFromDb = {};
