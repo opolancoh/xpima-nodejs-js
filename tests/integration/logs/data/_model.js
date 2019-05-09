@@ -2,7 +2,12 @@ const baseModel = require('../../_shared/base-model');
 
 const model = [
   {
-    name: 'name',
+    name: 'level',
+    type: 'string',
+    selectable: true
+  },
+  {
+    name: 'timestamp',
     type: 'string',
     selectable: true
   },
@@ -10,8 +15,7 @@ const model = [
     name: 'description',
     type: 'string',
     selectable: true
-  },
-  ...baseModel
+  }
 ];
 
 module.exports = model;

@@ -24,25 +24,25 @@ exports.run = ({ resourceSuffix, validData, invalidData }) => {
           .to.be.a('number')
           .to.equal(200);
       });
-      //
-      invalidData.forEach(element => {
-        it(`Code ${element.code}: ${element.message()}`, async () => {
-          const id = element.id || dataFromDb[0]._id;
-          const res = await request(apiUrl).delete(`${resourceSuffix}/${id}`);
+    });
+    //
+    invalidData.forEach(element => {
+      it(`Code ${element.code}: ${element.message()}`, async () => {
+        const id = element.id || dataFromDb[0]._id;
+        const res = await request(apiUrl).delete(`${resourceSuffix}/${id}`);
 
-          expect(res.status).to.equal(200);
+        expect(res.status).to.equal(200);
 
-          expect(res.body)
-            .to.have.a.property('code')
-            .to.be.a('number')
-            .to.equal(element.code);
-          expect(res.body)
-            .to.have.a.property('message')
-            .to.be.a('string');
-          expect(res.body)
-            .to.have.a.property('errors')
-            .to.be.an('object');
-        });
+        expect(res.body)
+          .to.have.a.property('code')
+          .to.be.a('number')
+          .to.equal(element.code);
+        expect(res.body)
+          .to.have.a.property('message')
+          .to.be.a('string');
+        expect(res.body)
+          .to.have.a.property('errors')
+          .to.be.an('object');
       });
     });
   });

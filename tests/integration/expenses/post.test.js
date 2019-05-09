@@ -6,7 +6,7 @@ const invalidData = require('./data/post-invalid-data');
 const { apiUrl } = require('../_shared/params');
 const { resourceSuffix } = require('./_params');
 
-const { resourceSuffix: accountResourceSuffix } = require('../account/_params');
+const { resourceSuffix: accountResourceSuffix } = require('../accounts/_params');
 const {
   resourceSuffix: categoryResourceSuffix
 } = require('../expense-categories/_params');

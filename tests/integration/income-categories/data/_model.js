@@ -6,6 +6,7 @@ const model = [
     type: 'string',
     selectable: true
   },
+
   {
     name: 'description',
     type: 'string',

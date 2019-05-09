@@ -7,9 +7,14 @@ const model = [
     selectable: true
   },
   {
-    name: 'description',
+    name: 'email',
     type: 'string',
     selectable: true
+  },
+  {
+    name: 'password',
+    type: 'string',
+    selectable: false
   },
   ...baseModel
 ];

@@ -1,7 +1,7 @@
 // Expense Categories
-require('./expense-category/_all.test');
-require('./income-category/_all.test');
-require('./log/_all.test');
-require('./user/_all.test');
-require('./account/_all.test');
+require('./expense-categories/_all.test');
+require('./income-categories/_all.test');
+require('./logs/_all.test');
+require('./users/_all.test');
+require('./accounts/_all.test');
 require('./expenses/_all.test');
