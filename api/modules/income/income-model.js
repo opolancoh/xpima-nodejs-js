@@ -16,7 +16,7 @@ const modelSchema = new mongoose.Schema({
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Expense_Category'
+    ref: 'Income_Category'
   },
   description: {
     type: String
@@ -25,4 +25,4 @@ const modelSchema = new mongoose.Schema({
 });
 
 // exporting the model
-module.exports = mongoose.model('Expense', modelSchema);
+module.exports = mongoose.model('Income', modelSchema);

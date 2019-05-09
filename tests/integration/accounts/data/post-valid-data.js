@@ -16,7 +16,7 @@ const validData = [
     body: {
       name: 'Cash',
       type: 'cash',
-      balance: 9007199254740991, // The largest exact integral value is 2^53-1, or 9007199254740991
+      balance: 0,
       description: 'Description for cash.'
     },
     nonRetornableFields: []
@@ -42,7 +42,7 @@ const validData = [
     body: {
       name: 'Bancolombia Ahorros',
       type: 'bankAccount',
-      balance: 1500000,
+      balance: 9007199254740991, // The largest exact integral value is 2^53-1, or 9007199254740991
       description: "Bancolombia's savings account"
     },
     nonRetornableFields: []
