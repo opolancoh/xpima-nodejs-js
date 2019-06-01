@@ -1,3 +1,7 @@
+const baseInvalidData = require('../../_shared/data/base-invalid-data').getData(
+  'CREATE'
+);
+
 const invalidData = [
   {
     body: {
@@ -51,6 +55,21 @@ const invalidData = [
       return `should not CREATE an item if AMOUNT is greater than (2^53)-1 '${
         this.body.amount
       }'`;
+    }
+  },
+  {
+    body: {
+      amount: 1000000000,
+      account: 'setValidValue', // filled later
+      date: '2019-05-26',
+      category: 'setValidValue', // filled later
+      description: 'Description.'
+    },
+    code: 400,
+    message: function() {
+      return `should not CREATE an item if AMOUNT '${
+        this.body.amount
+      }' is greater than ACCOUNT balance`;
     }
   },
   {
@@ -203,22 +222,7 @@ const invalidData = [
     }
   },
   //
-  {
-    body: {
-      prop: 'prop'
-    },
-    code: 400,
-    message: function() {
-      return `should not CREATE an item when field/property is not allowed`;
-    }
-  },
-  {
-    body: {},
-    code: 400,
-    message: function() {
-      return `should not CREATE an empty item/object`;
-    }
-  }
+  ...baseInvalidData
 ];
 
 module.exports = invalidData;

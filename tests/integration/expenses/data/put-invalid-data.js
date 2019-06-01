@@ -1,10 +1,11 @@
-const invalidDataFromPost = require('./post-invalid-data');
+const baseInvalidData = require('../../_shared/data/base-invalid-data').getData(
+  'UPDATE'
+);
 
 const invalidData = [
-  ...invalidDataFromPost,
   {
     id: '5c6e36b17a76dd1f30c17be1',
-    body: { amount: 654321 },
+    body: { description: 'New description!!' },
     code: 404,
     message: function() {
       return `should not UPDATE an item when ID '${
@@ -19,12 +20,30 @@ const invalidData = [
     message: function() {
       return `should not UPDATE an item when ID '${this.id}' is not valid`;
     }
-  }
+  },
+  {
+    id: '5c6e36b17a76dd1f30c17be1',
+    body: {
+      account: '5c6e36b17a76dd1f30c17be1',
+      description: 'New description!!'
+    },
+    code: 400,
+    message: function() {
+      return `should not UPDATE an item when ACCOUNT is sent`;
+    }
+  },
+  {
+    id: '5c6e36b17a76dd1f30c17be1',
+    body: {
+      amount: 100,
+      description: 'New description!!'
+    },
+    code: 400,
+    message: function() {
+      return `should not UPDATE an item when AMOUNT is sent`;
+    }
+  },
+  ...baseInvalidData
 ];
-
-invalidData.forEach(element => {
-  const msg = element.message();
-  element.message = msg.replace('CREATE', 'UPDATE');
-});
 
 module.exports = invalidData;

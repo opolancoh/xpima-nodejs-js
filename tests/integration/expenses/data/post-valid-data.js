@@ -5,7 +5,7 @@ const validData = [
   {
     body: {
       // This item must have all body from model
-      amount: 1050000,
+      amount: 200,
       account: '', // filled later
       date: '2019-05-26',
       category: '', // filled later
@@ -16,7 +16,7 @@ const validData = [
   },
   {
     body: {
-      amount: 2000,
+      amount: 400,
       account: '', // filled later
       date: '2019-06-20',
       category: '' // filled later
@@ -26,12 +26,11 @@ const validData = [
   },
   {
     body: {
-      amount: 9007199254740991, // The largest exact integral value is 2^53-1, or 9007199254740991
+      amount: 600,
       account: '', // filled later
       date: '2019-06-20',
       category: '', // filled later
-      description:
-        'The largest exact integral value is 2^53-1, or 9007199254740991'
+      description: 'Description'
     },
     nonRetornableFields: []
     // retornableFields: filled later

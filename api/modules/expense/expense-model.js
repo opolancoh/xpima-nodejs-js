@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { auditSchema } = require('../_shared/base-model');
 
 // defining the schema
-const expenseSchema = new mongoose.Schema({
+const modelSchema = new mongoose.Schema({
   amount: {
     type: Number
   },
@@ -25,4 +25,4 @@ const expenseSchema = new mongoose.Schema({
 });
 
 // exporting the model
-module.exports = mongoose.model('Expense', expenseSchema);
+module.exports = mongoose.model('Expense', modelSchema);

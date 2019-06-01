@@ -2,6 +2,7 @@ const model = require('./expense-model');
 const modelValidator = require('./expense-validator');
 const baseService = require('../_shared/base-service');
 const accountService = require('../account/account-service');
+const { c400, c404 } = require('../_shared/base-response');
 
 model._validator = modelValidator;
 model._validFields = {
@@ -25,8 +26,7 @@ service.create = async body => {
 
   const updateBalanceResult = await accountService.updateBalance({
     id: createResult.d.account,
-    income: 0,
-    expenditure: createResult.d.amount
+    amount: -createResult.d.amount
   });
   if (updateBalanceResult.errors) return updateBalanceResult;
 
@@ -42,16 +42,6 @@ service.update = async (id, body) => {
   if (validationResult.errors) return validationResult;
 
   const item = validationResult.validatedItem;
-
-  let oldAmount;
-  if (body.amount) {
-    // Get current amount
-    const expenseResult = await service.findById(id, {
-      select: 'amount'
-    });
-    if (expenseResult.errors) return expenseResult;
-    oldAmount = expenseResult.d.amount;
-  }
 
   // Update
   item.updatedAt = new Date();
@@ -72,15 +62,6 @@ service.update = async (id, body) => {
         itemUpdated,
         model._validFields.nonReturnable
       );
-    }
-    // If amount is sent then update balance
-    if (body.amount) {
-      const updateBalanceResult = await accountService.updateBalance({
-        id: itemUpdated.account,
-        income: 0,
-        expenditure: itemUpdated.amount - oldAmount
-      });
-      if (updateBalanceResult.errors) return updateBalanceResult;
     }
     return {
       code: 200,
@@ -116,8 +97,7 @@ service.delete = async id => {
     // Update balance
     const updateBalanceResult = await accountService.updateBalance({
       id: expenseResult.d.account,
-      income: 0,
-      expenditure: -expenseResult.d.amount
+      amount: expenseResult.d.amount
     });
     if (updateBalanceResult.errors) return updateBalanceResult;
     return {

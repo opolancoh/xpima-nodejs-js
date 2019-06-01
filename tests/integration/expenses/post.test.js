@@ -6,10 +6,10 @@ const invalidData = require('./data/post-invalid-data');
 const { apiUrl } = require('../_shared/params');
 const { resourceSuffix } = require('./_params');
 
-const { resourceSuffix: accountResourceSuffix } = require('../account/_params');
+const { resourceSuffix: accountResourceSuffix } = require('../accounts/_params');
 const {
   resourceSuffix: categoryResourceSuffix
-} = require('../expense-category/_params');
+} = require('../expense-categories/_params');
 
 describe(`POST ${apiUrl}${resourceSuffix}`, () => {
   let dataFromDb = {};
@@ -18,7 +18,7 @@ describe(`POST ${apiUrl}${resourceSuffix}`, () => {
     // accounts
     dataFromDb.accounts = {};
     const accountsResponse = await request(apiUrl).get(
-      `${accountResourceSuffix}?select=_id`
+      `${accountResourceSuffix}?select=_id&limit=5`
     );
     dataFromDb.accounts.d = accountsResponse.body.d;
     dataFromDb.accounts.totalCount = dataFromDb.accounts.d.length;

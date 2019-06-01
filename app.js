@@ -7,14 +7,16 @@ const notFoundHandler = require('./middleware/not-found-handler');
 require('express-async-errors');
 
 // routers
-var homeRouter = require('./routes/home');
-var authRouter = require('./routes/auth');
-var logsRouter = require('./routes/logs');
-var usersRouter = require('./routes/users');
-var expenseCategoriesRouter = require('./routes/expense-categories');
-var incomeCategoriesRouter = require('./routes/income-categories');
-var accountsRouter = require('./routes/accounts');
-var expensesRouter = require('./routes/expenses');
+const homeRouter = require('./routes/home');
+const authRouter = require('./routes/auth');
+const logsRouter = require('./routes/logs');
+const usersRouter = require('./routes/users');
+const expenseCategoriesRouter = require('./routes/expense-categories');
+const incomeCategoriesRouter = require('./routes/income-categories');
+const accountsRouter = require('./routes/accounts');
+const expensesRouter = require('./routes/expenses');
+const incomeRouter = require('./routes/income');
+const transfersRouter = require('./routes/transfers');
 
 const app = express();
 
@@ -34,6 +36,8 @@ app.use('/api/expense-categories', expenseCategoriesRouter);
 app.use('/api/income-categories', incomeCategoriesRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/expenses', expensesRouter);
+app.use('/api/income', incomeRouter);
+app.use('/api/transfers', transfersRouter);
 
 // db
 require('./db/mongo-db');

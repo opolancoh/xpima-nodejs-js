@@ -17,12 +17,6 @@ const modelSchema = new mongoose.Schema({
   description: {
     type: String
   },
-  totalRevenue: {
-    type: Number
-  },
-  totalExpenses: {
-    type: Number
-  },
   ...auditSchema
 });
 
