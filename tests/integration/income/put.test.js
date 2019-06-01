@@ -6,7 +6,9 @@ const invalidData = require('./data/put-invalid-data');
 const { apiUrl } = require('../_shared/params');
 const { resourceSuffix } = require('./_params');
 
-const { resourceSuffix: accountResourceSuffix } = require('../accounts/_params');
+const {
+  resourceSuffix: accountResourceSuffix
+} = require('../accounts/_params');
 const {
   resourceSuffix: categoryResourceSuffix
 } = require('../expense-categories/_params');
@@ -18,7 +20,7 @@ describe(`PUT ${apiUrl}${resourceSuffix}/:id`, () => {
     // item to update
     dataFromDb.item = {};
     const itemResponse = await request(apiUrl).get(
-      `${resourceSuffix}?select=_id&limit=${1}`
+      `${resourceSuffix}?select=_id&limit=1`
     );
     dataFromDb.item.d = itemResponse.body.d[0];
     // accounts
@@ -81,43 +83,40 @@ describe(`PUT ${apiUrl}${resourceSuffix}/:id`, () => {
         expect(res.body.d).to.have.a.property(key, newItem[key]);
       });
     });
-    invalidData.forEach(element => {
-      it(`Code ${element.code}: ${element.message}`, async () => {
-        if (element.body.account && element.body.account === 'setValidValue') {
-          element.body.account =
-            dataFromDb.accounts.d[
-              Math.floor(Math.random() * dataFromDb.accounts.totalCount)
-            ]._id;
-        }
-        if (
-          element.body.category &&
-          element.body.category === 'setValidValue'
-        ) {
-          element.body.category =
-            dataFromDb.categories.d[
-              Math.floor(Math.random() * dataFromDb.categories.totalCount)
-            ]._id;
-        }
-        //
-        const id = element.id ? element.id : dataFromDb.item.d_id;
-        const newItem = element.body;
-        const res = await request(apiUrl)
-          .put(`${resourceSuffix}/${id}`)
-          .send(newItem);
-        //
-        expect(res.status).to.equal(200);
-        expect(res.body)
-          .to.have.a.property('code')
-          .to.be.a('number')
-          .to.equal(element.code);
-        //
-        expect(res.body)
-          .to.have.a.property('message')
-          .to.be.a('string');
-        expect(res.body)
-          .to.have.a.property('errors')
-          .to.be.an('object');
-      });
+  });
+  invalidData.forEach(element => {
+    it(`Code ${element.code}: ${element.message}`, async () => {
+      if (element.body.account && element.body.account === 'setValidValue') {
+        element.body.account =
+          dataFromDb.accounts.d[
+            Math.floor(Math.random() * dataFromDb.accounts.totalCount)
+          ]._id;
+      }
+      if (element.body.category && element.body.category === 'setValidValue') {
+        element.body.category =
+          dataFromDb.categories.d[
+            Math.floor(Math.random() * dataFromDb.categories.totalCount)
+          ]._id;
+      }
+      //
+      const id = element.id ? element.id : dataFromDb.item.d_id;
+      const newItem = element.body;
+      const res = await request(apiUrl)
+        .put(`${resourceSuffix}/${id}`)
+        .send(newItem);
+      //
+      expect(res.status).to.equal(200);
+      expect(res.body)
+        .to.have.a.property('code')
+        .to.be.a('number')
+        .to.equal(element.code);
+      //
+      expect(res.body)
+        .to.have.a.property('message')
+        .to.be.a('string');
+      expect(res.body)
+        .to.have.a.property('errors')
+        .to.be.an('object');
     });
   });
 });

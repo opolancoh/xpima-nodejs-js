@@ -16,7 +16,7 @@ const validData = [
     body: {
       name: 'Cash',
       type: 'cash',
-      balance: 0,
+      balance: 20000,
       description: 'Description for cash.'
     },
     nonRetornableFields: []
@@ -25,9 +25,18 @@ const validData = [
     body: {
       name: 'Visa',
       type: 'creditCard',
-      balance: 1500000
+      balance: 30000
     },
     nonRetornableFields: ['description']
+  },
+  {
+    body: {
+      name: 'Bancolombia Ahorros',
+      type: 'bankAccount',
+      balance: 40000,
+      description: "Bancolombia's savings account"
+    },
+    nonRetornableFields: []
   },
   {
     body: {
@@ -40,18 +49,18 @@ const validData = [
   },
   {
     body: {
-      name: 'Bancolombia Ahorros',
+      name: 'Bancolombia Corriente',
       type: 'bankAccount',
-      balance: 9007199254740991, // The largest exact integral value is 2^53-1, or 9007199254740991
-      description: "Bancolombia's savings account"
+      description: "Bancolombia's current account"
     },
     nonRetornableFields: []
   },
   {
     body: {
-      name: 'Bancolombia Corriente',
+      name: 'BBVA Ahorros',
       type: 'bankAccount',
-      description: "Bancolombia's current account"
+      balance: 9007199254740991, // The largest exact integral value is 2^53-1, or 9007199254740991
+      description: "BBVA's savings account"
     },
     nonRetornableFields: []
   }

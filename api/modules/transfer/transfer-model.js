@@ -4,15 +4,19 @@ const { auditSchema } = require('../_shared/base-model');
 
 // defining the schema
 const modelSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    index: true
+  fromAccount: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Account'
   },
-  type: {
-    type: String
+  toAccount: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Account'
   },
-  balance: {
+  amount: {
     type: Number
+  },
+  date: {
+    type: Date
   },
   description: {
     type: String
@@ -21,6 +25,4 @@ const modelSchema = new mongoose.Schema({
 });
 
 // exporting the model
-const model = mongoose.model('Account', modelSchema);
-
-module.exports = model;
+module.exports = mongoose.model('Transfer', modelSchema);

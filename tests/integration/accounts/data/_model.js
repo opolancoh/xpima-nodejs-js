@@ -21,16 +21,6 @@ const model = [
     type: 'string',
     selectable: true
   },
-  {
-    name: 'totalRevenue',
-    type: 'number',
-    selectable: true
-  },
-  {
-    name: 'totalExpenses',
-    type: 'number',
-    selectable: true
-  },
   ...baseModel
 ];
 

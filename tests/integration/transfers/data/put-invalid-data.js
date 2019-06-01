@@ -4,6 +4,14 @@ const baseInvalidData = require('../../_shared/data/base-invalid-data').getData(
 
 const invalidData = [
   {
+    id: '123456',
+    body: { description: 'New description!!' },
+    code: 400,
+    message: function() {
+      return `should not UPDATE an item when ID '${this.id}' is not valid`;
+    }
+  },
+  {
     id: '5c6e36b17a76dd1f30c17be1',
     body: { description: 'New description!!' },
     code: 404,
@@ -14,22 +22,25 @@ const invalidData = [
     }
   },
   {
-    id: '123',
-    body: { amount: 654321 },
+    id: '5c6e36b17a76dd1f30c17be1',
+    body: {
+      fromAccount: '5c6e36b17a76dd1f30c17be1',
+      description: 'New description!!'
+    },
     code: 400,
     message: function() {
-      return `should not UPDATE an item when ID '${this.id}' is not valid`;
+      return `should not UPDATE an item when FROMACCOUNT is sent`;
     }
   },
   {
     id: '5c6e36b17a76dd1f30c17be1',
     body: {
-      account: '5c6e36b17a76dd1f30c17be1',
+      toAccount: '5c6e36b17a76dd1f30c17be1',
       description: 'New description!!'
     },
     code: 400,
     message: function() {
-      return `should not UPDATE an item when ACCOUNT is sent`;
+      return `should not UPDATE an item when TOACCOUNT is sent`;
     }
   },
   {

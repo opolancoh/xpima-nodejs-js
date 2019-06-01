@@ -59,6 +59,21 @@ const invalidData = [
   },
   {
     body: {
+      amount: 1000000000,
+      account: 'setValidValue', // filled later
+      date: '2019-05-26',
+      category: 'setValidValue', // filled later
+      description: 'Description.'
+    },
+    code: 400,
+    message: function() {
+      return `should not CREATE an item if AMOUNT '${
+        this.body.amount
+      }' is greater than ACCOUNT balance`;
+    }
+  },
+  {
+    body: {
       account: 'setValidValue', // filled later
       date: '2019-05-26',
       category: 'setValidValue', // filled later

@@ -25,8 +25,7 @@ service.create = async body => {
 
   const updateBalanceResult = await accountService.updateBalance({
     id: createResult.d.account,
-    income: createResult.d.amount,
-    expenditure: 0
+    amount: createResult.d.amount
   });
   if (updateBalanceResult.errors) return updateBalanceResult;
 
@@ -77,8 +76,7 @@ service.update = async (id, body) => {
     if (body.amount) {
       const updateBalanceResult = await accountService.updateBalance({
         id: itemUpdated.account,
-        income: itemUpdated.amount - oldAmount,
-        expenditure: 0
+        amount: itemUpdated.amount - oldAmount
       });
       if (updateBalanceResult.errors) return updateBalanceResult;
     }
@@ -116,8 +114,7 @@ service.delete = async id => {
     // Update balance
     const updateBalanceResult = await accountService.updateBalance({
       id: expenseResult.d.account,
-      income: -expenseResult.d.amount,
-      expenditure: 0
+      amount: -expenseResult.d.amount
     });
     if (updateBalanceResult.errors) return updateBalanceResult;
     return {

@@ -2,7 +2,7 @@ const model = require('./_model');
 const { createValidDataForPut } = require('../../_shared/actions');
 
 const validData = [
-  {
+  /*{
     body: {
       amount: 123456
     },
@@ -17,7 +17,7 @@ const validData = [
     message: function() {
       return `should UPDATE an item changing ACCOUNT to a valid value`;
     }
-  },
+  },*/
   {
     body: {
       date: new Date('2019-01-24').toISOString()

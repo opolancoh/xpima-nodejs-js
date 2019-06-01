@@ -9,5 +9,5 @@
 require('./post.test');
 require('./get.test');
 require('./getbyId.test');
-//require('./put.test');
-//require('./delete.test');
+require('./put.test');
+require('./delete.test');

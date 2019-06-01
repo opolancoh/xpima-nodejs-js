@@ -2,12 +2,22 @@ const baseModel = require('../../_shared/base-model');
 
 const model = [
   {
-    name: 'level',
+    name: 'fromAccount',
     type: 'string',
     selectable: true
   },
   {
-    name: 'timestamp',
+    name: 'toAccount',
+    type: 'string',
+    selectable: true
+  },
+  {
+    name: 'amount',
+    type: 'number',
+    selectable: true
+  },
+  {
+    name: 'date',
     type: 'string',
     selectable: true
   },
@@ -16,7 +26,7 @@ const model = [
     type: 'string',
     selectable: true
   },
-  //...baseModel
+  ...baseModel
 ];
 
 module.exports = model;

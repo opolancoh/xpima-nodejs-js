@@ -26,12 +26,11 @@ const validData = [
   },
   {
     body: {
-      amount: 9007199254740991, // The largest exact integral value is 2^53-1, or 9007199254740991
+      amount: 1500000000,
       account: '', // filled later
       date: '2019-06-20',
       category: '', // filled later
-      description:
-        'The largest exact integral value is 2^53-1, or 9007199254740991'
+      description: 'Description'
     },
     nonRetornableFields: []
     // retornableFields: filled later

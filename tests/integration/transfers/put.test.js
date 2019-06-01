@@ -1,4 +1,4 @@
-const validData = [];
+const validData = require('./data/put-valid-data');
 const invalidData = require('./data/put-invalid-data');
 const { resourceSuffix } = require('./_params');
 

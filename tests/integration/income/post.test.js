@@ -18,7 +18,7 @@ describe(`POST ${apiUrl}${resourceSuffix}`, () => {
     // accounts
     dataFromDb.accounts = {};
     const accountsResponse = await request(apiUrl).get(
-      `${accountResourceSuffix}?select=_id`
+      `${accountResourceSuffix}?select=_id&limit=5`
     );
     dataFromDb.accounts.d = accountsResponse.body.d;
     dataFromDb.accounts.totalCount = dataFromDb.accounts.d.length;

@@ -156,18 +156,23 @@ baseService.update = async (id, body, model) => {
     };
 };
 
-baseService.delete = async (id, model) => {
+baseService.delete = async (id, model, options = {}) => {
   // Input and business validation
   const validationResult = await model._validator.deleteValidation(id);
   if (validationResult) return validationResult;
 
   // Delete
-  const itemDeleted = await model.findOneAndDelete({
-    _id: id
-  });
+  const itemDeleted = await model.findOneAndDelete(
+    {
+      _id: id
+    },
+    options
+  );
+
   if (itemDeleted)
     return {
-      code: 200
+      code: 200,
+      d: itemDeleted
     };
   else
     return {

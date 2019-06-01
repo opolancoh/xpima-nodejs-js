@@ -6,10 +6,9 @@ const invalidData = require('./data/post-invalid-data');
 const { apiUrl } = require('../_shared/params');
 const { resourceSuffix } = require('./_params');
 
-const { resourceSuffix: accountResourceSuffix } = require('../accounts/_params');
 const {
-  resourceSuffix: categoryResourceSuffix
-} = require('../expense-categories/_params');
+  resourceSuffix: accountResourceSuffix
+} = require('../accounts/_params');
 
 describe(`POST ${apiUrl}${resourceSuffix}`, () => {
   let dataFromDb = {};
@@ -18,31 +17,20 @@ describe(`POST ${apiUrl}${resourceSuffix}`, () => {
     // accounts
     dataFromDb.accounts = {};
     const accountsResponse = await request(apiUrl).get(
-      `${accountResourceSuffix}?select=_id&limit=5`
+      `${accountResourceSuffix}?select=_id,balance`
     );
     dataFromDb.accounts.d = accountsResponse.body.d;
     dataFromDb.accounts.totalCount = dataFromDb.accounts.d.length;
-    // categories
-    dataFromDb.categories = {};
-    const categoriesResponse = await request(apiUrl).get(
-      `${categoryResourceSuffix}?select=_id`
-    );
-    dataFromDb.categories.d = categoriesResponse.body.d;
-    dataFromDb.categories.totalCount = dataFromDb.categories.d.length;
   });
   //
+  let count = 0;
   validData.forEach(element => {
     it(`Code 201: should CREATE an item when data is valid. amount: '${
       element.body.amount
     }'`, async () => {
-      element.body.account =
-        dataFromDb.accounts.d[
-          Math.floor(Math.random() * dataFromDb.accounts.totalCount)
-        ]._id;
-      element.body.category =
-        dataFromDb.categories.d[
-          Math.floor(Math.random() * dataFromDb.categories.totalCount)
-        ]._id;
+      element.body.fromAccount = dataFromDb.accounts.d[count]._id;
+      element.body.toAccount = dataFromDb.accounts.d[count + 1]._id;
+      count++;
 
       const res = await request(apiUrl)
         .post(resourceSuffix)

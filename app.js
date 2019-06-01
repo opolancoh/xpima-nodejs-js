@@ -16,6 +16,7 @@ const incomeCategoriesRouter = require('./routes/income-categories');
 const accountsRouter = require('./routes/accounts');
 const expensesRouter = require('./routes/expenses');
 const incomeRouter = require('./routes/income');
+const transfersRouter = require('./routes/transfers');
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/api/income-categories', incomeCategoriesRouter);
 app.use('/api/accounts', accountsRouter);
 app.use('/api/expenses', expensesRouter);
 app.use('/api/income', incomeRouter);
+app.use('/api/transfers', transfersRouter);
 
 // db
 require('./db/mongo-db');
