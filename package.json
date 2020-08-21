@@ -21,7 +21,7 @@
   "author": "Oscar Polanco <opolancoh@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "config": "^3.0.1",
     "cors": "^2.8.5",
     "express": "^4.16.4",
